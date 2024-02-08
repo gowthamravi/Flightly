@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "codingkeysgenerator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zijievv/CodingKeysGenerator",
+      "state" : {
+        "revision" : "30213874768d8065d3ffe9a996a38476bcd89b21",
+        "version" : "0.1.4"
+      }
+    },
+    {
+      "identity" : "swift-macros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/bernndr/swift-macros",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d551d968f736d12505f8095c386b8bc25a98bcd4"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    }
+  ],
+  "version" : 2
+}

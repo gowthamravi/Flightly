@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "servicehandler-main",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gowthamravi/ServiceHandler-main.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1a5e9d2e09809cb62027dd27b6913f8e6540dd97"
+      }
+    },
+    {
       "identity" : "swift-macros",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/bernndr/swift-macros",

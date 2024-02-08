@@ -44,6 +44,7 @@
 		EDB4F7362B6EAEBD0092D19B /* SwiftDiagnostics in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F7352B6EAEBD0092D19B /* SwiftDiagnostics */; };
 		EDB4F7382B6EAEBD0092D19B /* SwiftIDEUtils in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F7372B6EAEBD0092D19B /* SwiftIDEUtils */; };
 		EDB4F73B2B6EAF0C0092D19B /* CodingKeysGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73A2B6EAF0C0092D19B /* CodingKeysGenerator */; };
+		EDB4F73E2B754BD80092D19B /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73D2B754BD80092D19B /* ServiceHandler */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,7 +77,6 @@
 		A3829BE42AF2EA2B00B927FF /* Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requests.swift; sourceTree = "<group>"; };
 		A3829BE62AF2EA3E00B927FF /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
-		A384B4412AF83F78007223A4 /* ServiceHandler-main */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ServiceHandler-main"; path = "FlightSearch/ServiceHandler-main"; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,6 +91,7 @@
 				EDB4F7342B6EAEBD0092D19B /* SwiftCompilerPluginMessageHandling in Frameworks */,
 				EDB4F7302B6EAEBD0092D19B /* SwiftBasicFormat in Frameworks */,
 				EDB4F7362B6EAEBD0092D19B /* SwiftDiagnostics in Frameworks */,
+				EDB4F73E2B754BD80092D19B /* ServiceHandler in Frameworks */,
 				EDB4F7322B6EAEBD0092D19B /* SwiftCompilerPlugin in Frameworks */,
 				ED862DED2B6EAAD900D8B3F7 /* SwiftMacros in Frameworks */,
 			);
@@ -113,7 +114,6 @@
 		A378D8552AF19C15003D3BDB = {
 			isa = PBXGroup;
 			children = (
-				A384B4412AF83F78007223A4 /* ServiceHandler-main */,
 				A378D8602AF19C15003D3BDB /* FlightSearch */,
 				A378D85F2AF19C15003D3BDB /* Products */,
 				A3DAB6A62AF7B62D00B3E1B2 /* Frameworks */,
@@ -257,6 +257,7 @@
 				EDB4F7352B6EAEBD0092D19B /* SwiftDiagnostics */,
 				EDB4F7372B6EAEBD0092D19B /* SwiftIDEUtils */,
 				EDB4F73A2B6EAF0C0092D19B /* CodingKeysGenerator */,
+				EDB4F73D2B754BD80092D19B /* ServiceHandler */,
 			);
 			productName = FlightSearch;
 			productReference = A378D85E2AF19C15003D3BDB /* FlightSearch.app */;
@@ -290,6 +291,7 @@
 				ED862DEB2B6EAAD900D8B3F7 /* XCRemoteSwiftPackageReference "swift-macros" */,
 				EDB4F72E2B6EAEBD0092D19B /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				EDB4F7392B6EAF0C0092D19B /* XCRemoteSwiftPackageReference "CodingKeysGenerator" */,
+				EDB4F73C2B754BD80092D19B /* XCRemoteSwiftPackageReference "ServiceHandler-main" */,
 			);
 			productRefGroup = A378D85F2AF19C15003D3BDB /* Products */;
 			projectDirPath = "";
@@ -573,6 +575,14 @@
 				minimumVersion = 0.1.4;
 			};
 		};
+		EDB4F73C2B754BD80092D19B /* XCRemoteSwiftPackageReference "ServiceHandler-main" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gowthamravi/ServiceHandler-main.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -614,6 +624,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EDB4F7392B6EAF0C0092D19B /* XCRemoteSwiftPackageReference "CodingKeysGenerator" */;
 			productName = CodingKeysGenerator;
+		};
+		EDB4F73D2B754BD80092D19B /* ServiceHandler */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDB4F73C2B754BD80092D19B /* XCRemoteSwiftPackageReference "ServiceHandler-main" */;
+			productName = ServiceHandler;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

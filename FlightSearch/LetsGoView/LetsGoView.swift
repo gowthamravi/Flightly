@@ -9,7 +9,7 @@ import SwiftUI
 import ServiceHandler
 
 struct LetsGoView: View {
-    @Environment(FlightSearch.self) private var flight
+    @Environment(FlightSearch.self) private var flightSearch
     @State private var isPresented: Bool = false
     @State private var isErrorPresented: Bool = false
 
@@ -17,7 +17,7 @@ struct LetsGoView: View {
         Button {
             Task {
                 do {
-                    try await flight.searchFlight()
+                    try await flightSearch.searchFlight()
                     isPresented.toggle()
                 } catch {
                     isErrorPresented.toggle()
@@ -28,7 +28,7 @@ struct LetsGoView: View {
                 .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
-            FlightsListView(flightDates: flight.flightDates, isPresented: $isPresented)
+            FlightsListView(flights: flightSearch.flights, isPresented: $isPresented)
         }
         .sheet(isPresented: $isErrorPresented) {
             ContentUnAvailableCustomView(isPresented: $isErrorPresented)

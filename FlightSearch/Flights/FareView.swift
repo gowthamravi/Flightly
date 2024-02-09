@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct FareView: View {
-    let regularFare: RegularFare
-    
-    var body: some View {
-        HStack {
-            Text(regularFare.fareClass)
-            Text(String(format: "%.2f", regularFare.fares[0].amount))
-            Text(regularFare.fares[0].type)
-        }
-    }
-}
+//struct FareView: View {
+//    let regularFare: RegularFare
+//    
+//    var body: some View {
+//        HStack {
+//            Text(regularFare.fareClass)
+//            Text(String(format: "%.2f", regularFare.fares[0].amount))
+//            Text(regularFare.fares[0].type)
+//        }
+//    }
+//}

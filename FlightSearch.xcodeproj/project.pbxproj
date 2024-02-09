@@ -45,6 +45,7 @@
 		EDB4F7382B6EAEBD0092D19B /* SwiftIDEUtils in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F7372B6EAEBD0092D19B /* SwiftIDEUtils */; };
 		EDB4F73B2B6EAF0C0092D19B /* CodingKeysGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73A2B6EAF0C0092D19B /* CodingKeysGenerator */; };
 		EDB4F73E2B754BD80092D19B /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73D2B754BD80092D19B /* ServiceHandler */; };
+		EDB4F7402B76A8090092D19B /* airport.json in Resources */ = {isa = PBXBuildFile; fileRef = EDB4F73F2B76A8090092D19B /* airport.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		A3829BE62AF2EA3E00B927FF /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
+		EDB4F73F2B76A8090092D19B /* airport.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = airport.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 				A3829BEA2AF2EF5400B927FF /* Station.swift */,
 				A341AC9F2AF7B7F700CF69E5 /* Trips.swift */,
 				A378D8652AF19C16003D3BDB /* Assets.xcassets */,
+				EDB4F73F2B76A8090092D19B /* airport.json */,
 				A378D8672AF19C16003D3BDB /* Preview Content */,
 			);
 			path = FlightSearch;
@@ -309,6 +312,7 @@
 			files = (
 				A378D8692AF19C16003D3BDB /* Preview Assets.xcassets in Resources */,
 				A378D8662AF19C16003D3BDB /* Assets.xcassets in Resources */,
+				EDB4F7402B76A8090092D19B /* airport.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,8 +583,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gowthamravi/ServiceHandler-main.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 1.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

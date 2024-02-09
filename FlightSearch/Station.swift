@@ -7,18 +7,10 @@
 
 import Foundation
 
-struct Station: Decodable {
-    let code, name: String
-    let countryName: String
-    let markets: [Market]?
-    let tripCardImageURL: String?
-    
-    struct Market: Decodable {
-        let code: String
-        let group: String?
-    }
+struct Station: Codable {
+    let code, name, country: String    
 }
 
-struct Stations: Decodable {
+struct Stations: Codable {
     let stations: [Station]
 }

@@ -7,67 +7,85 @@
 
 import Foundation
 
-// MARK: - FlightSearchResponse
-struct FlightSearchResponse: Decodable {
-    let trips: [Trip]?
+struct FlightSearchResponse : Codable {
+    let data : Datas?
+    let meta : Meta?
+    let status : Bool?
+    let message : String?
 }
 
-// MARK: - Trip
-struct Trip: Decodable {
-    let dates: [DateElement]
+struct Datas : Codable {
+    let flights : [Flights]?
 }
 
-// MARK: - DateElement
-struct DateElement: Identifiable, Decodable {
+struct Flights : Identifiable, Codable {
     let id = UUID()
-    let dateOut: String
-    let flights: [Flight]
-    private enum CodingKeys: CodingKey {
-        case flights, dateOut
-    }
-}
-
-// MARK: - Flight
-struct Flight: Identifiable, Decodable {
-    let id = UUID()
-    let regularFare: RegularFare
-    let segments: [Segment]
-    let flightNumber: String
-    let duration: String
-    let timeUTC: [String]
-    private enum CodingKeys: CodingKey {
-        case regularFare
-        case segments
-        case flightNumber
-        case duration
-        case timeUTC
-    }
-}
-
-// MARK: - RegularFare
-struct RegularFare: Decodable {
-    let fareClass: String
-    let fares: [Fare]
-}
-
-// MARK: - Fare
-struct Fare: Identifiable, Decodable {
-    let id = UUID()
-    let type: String
-    let amount: Double
+    let tempId: String?
+    let bounds : [Bounds]?
     
-    private enum CodingKeys: CodingKey {
-        case type
-        case amount
+    enum CodingKeys: String, CodingKey {
+        case tempId = "id"
+        case bounds
     }
 }
 
-// MARK: - Segment
-struct Segment: Decodable {
-    let segmentNr: Int
-    let origin: String
-    let destination: String
-    let flightNumber: String
-    let timeUTC: [String]
-    let duration: String
+struct Bounds : Codable {
+    let boundId : String?
+    let segments : [Segments]?
+}
+
+struct IncludedCabinBaggage : Codable {
+    let pieces : Int?
+    let weight : Int?
+    let weightUnit : String?
+}
+struct IncludedCheckedBaggage : Codable {
+    let pieces : Int?
+    let weight : Int?
+    let weightUnit : String?
+}
+
+struct OperatingCarrier : Codable {
+    let code : String?
+    let name : String?
+}
+
+struct Destination : Codable {
+    let code : String?
+    let name : String?
+    let cityCode : String?
+    let cityName : String?
+    let airportCode : String?
+    let airportName : String?
+}
+
+struct Segments : Codable {
+    let segmentId : String?
+    let origin : Origin?
+    let destination : Destination?
+    let arrivedAt : String?
+    let departuredAt : String?
+    let includedCabinBaggage : IncludedCabinBaggage?
+    let includedCheckedBaggage : IncludedCheckedBaggage?
+    let flightNumber : String?
+    let cabinClassName : String?
+    let numberOfTechnicalStops : Int?
+    let duration : Int?
+    let operatingCarrier : OperatingCarrier?
+}
+
+struct Origin : Codable {
+    let code : String?
+    let name : String?
+    let cityCode : String?
+    let cityName : String?
+    let airportCode : String?
+    let airportName : String?
+}
+
+struct Meta : Codable {
+    let currentPage : Int?
+    let limit : Int?
+    let totalRecords : Int?
+    let totalPage : Int?
 }

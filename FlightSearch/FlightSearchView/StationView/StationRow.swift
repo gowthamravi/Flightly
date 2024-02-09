@@ -12,7 +12,7 @@ struct StationRow: View {
     
     var body: some View {
         let name = station?.name ?? ""
-        let countryName = station?.countryName ?? ""
+        let countryName = station?.country ?? ""
         let code = station?.code ?? ""
 
         HStack {

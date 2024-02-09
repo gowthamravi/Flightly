@@ -25,10 +25,10 @@ struct StationListView: View {
 
                     Button {
                         if stationType == .origin {
-                            flight.origin = station
-                            flight.destination = nil
+                            flight.origin = station!
+//                            flight.destination = nil
                         } else {
-                            flight.destination = station
+                            flight.destination = station!
                         }
                         isPresented.toggle()
                     } label: {
@@ -44,25 +44,12 @@ struct StationListView: View {
     }
     
     private var stationLists: [String: Station] {
-        var list: [String: Station] = [:]
-        
-        if stationType == .origin {
-            list = flight.allStations
-        } else {
-            if let markets = flight.origin?.markets {
-                for aMarket in markets {
-                    let station = flight.allStations[aMarket.code]
-                    list[aMarket.code] = station
-                }
-            }
-        }
-        
+        var list = flight.allStations
         if !searchText.isEmpty {
             list = list.filter{ (key: String, value: Station) in
-                value.countryName.contains(searchText)
+                value.country.lowercased().contains(searchText.lowercased()) ||  value.code.lowercased().contains(searchText.lowercased()) || value.name.lowercased().contains(searchText.lowercased())
             }
         }
-        
         return list
     }
 }

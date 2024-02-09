@@ -23,12 +23,12 @@ extension String {
     
     var toMMMddYYYY: String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        dateFormatter.timeZone = .gmt
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
 
         let dt = dateFormatter.date(from: self)
         dateFormatter.timeZone = TimeZone.current
-        dateFormatter.dateFormat = "MMM, dd yyyy"
+        dateFormatter.dateFormat = "MMM, dd yyyy, HH:mm a"
 
         return dateFormatter.string(from: dt ?? Date())
       }

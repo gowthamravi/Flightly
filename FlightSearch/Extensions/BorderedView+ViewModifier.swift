@@ -16,7 +16,6 @@ struct BorderedView: ViewModifier {
             .background(Color.clear)
             .foregroundStyle(.blue)
             .border(.blue)
-//            .clipShape(Capsule())
     }
 }
 

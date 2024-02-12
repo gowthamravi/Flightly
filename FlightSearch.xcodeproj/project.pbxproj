@@ -46,6 +46,8 @@
 		EDB4F73B2B6EAF0C0092D19B /* CodingKeysGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73A2B6EAF0C0092D19B /* CodingKeysGenerator */; };
 		EDB4F73E2B754BD80092D19B /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F73D2B754BD80092D19B /* ServiceHandler */; };
 		EDB4F7402B76A8090092D19B /* airport.json in Resources */ = {isa = PBXBuildFile; fileRef = EDB4F73F2B76A8090092D19B /* airport.json */; };
+		EDF746A12B7A90AB00C6AAD2 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */; };
+		EDF746A42B7A934300C6AAD2 /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = EDF746A32B7A934300C6AAD2 /* ActivityIndicatorView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +82,7 @@
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
 		EDB4F73F2B76A8090092D19B /* airport.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = airport.json; sourceTree = "<group>"; };
+		EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDF746A42B7A934300C6AAD2 /* ActivityIndicatorView in Frameworks */,
 				A3DAB6A82AF7B62D00B3E1B2 /* ServiceHandler in Frameworks */,
 				EDB4F7382B6EAEBD0092D19B /* SwiftIDEUtils in Frameworks */,
 				EDB4F73B2B6EAF0C0092D19B /* CodingKeysGenerator in Frameworks */,
@@ -167,6 +171,7 @@
 				A37A7A2A2AF5AC4E003789FC /* BorderedView+ViewModifier.swift */,
 				A37A7A1F2AF59D64003789FC /* Date+Extension.swift */,
 				A341ACA62AF7C8BE00CF69E5 /* String+Extension.swift */,
+				EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -261,6 +266,7 @@
 				EDB4F7372B6EAEBD0092D19B /* SwiftIDEUtils */,
 				EDB4F73A2B6EAF0C0092D19B /* CodingKeysGenerator */,
 				EDB4F73D2B754BD80092D19B /* ServiceHandler */,
+				EDF746A32B7A934300C6AAD2 /* ActivityIndicatorView */,
 			);
 			productName = FlightSearch;
 			productReference = A378D85E2AF19C15003D3BDB /* FlightSearch.app */;
@@ -295,6 +301,7 @@
 				EDB4F72E2B6EAEBD0092D19B /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				EDB4F7392B6EAF0C0092D19B /* XCRemoteSwiftPackageReference "CodingKeysGenerator" */,
 				EDB4F73C2B754BD80092D19B /* XCRemoteSwiftPackageReference "ServiceHandler-main" */,
+				EDF746A22B7A934300C6AAD2 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
 			);
 			productRefGroup = A378D85F2AF19C15003D3BDB /* Products */;
 			projectDirPath = "";
@@ -327,6 +334,7 @@
 				A378D8642AF19C15003D3BDB /* GuestView.swift in Sources */,
 				A341ACA92AF7C8D700CF69E5 /* FlightRow.swift in Sources */,
 				A3829BE52AF2EA2B00B927FF /* Requests.swift in Sources */,
+				EDF746A12B7A90AB00C6AAD2 /* ActivityIndicator.swift in Sources */,
 				A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */,
 				A37A7A2B2AF5AC4E003789FC /* BorderedView+ViewModifier.swift in Sources */,
 				A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */,
@@ -587,6 +595,14 @@
 				version = 1.0.1;
 			};
 		};
+		EDF746A22B7A934300C6AAD2 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/ActivityIndicatorView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -633,6 +649,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EDB4F73C2B754BD80092D19B /* XCRemoteSwiftPackageReference "ServiceHandler-main" */;
 			productName = ServiceHandler;
+		};
+		EDF746A32B7A934300C6AAD2 /* ActivityIndicatorView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDF746A22B7A934300C6AAD2 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
+			productName = ActivityIndicatorView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

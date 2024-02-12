@@ -14,32 +14,29 @@ struct StationListView: View {
     @State private var searchText = ""
     
     var body: some View {
-        if stationLists.isEmpty {
-            ContentUnAvailableCustomView(isPresented: $isPresented)
-        } else {
-            let list = stationLists
-
-            NavigationStack {
-                List(list.keys.sorted(), id: \.self) { key in
-                    let station = list[key]
-
-                    Button {
-                        if stationType == .origin {
-                            flight.origin = station!
-//                            flight.destination = nil
-                        } else {
-                            flight.destination = station!
-                        }
-                        isPresented.toggle()
-                    } label: {
-                        StationRow(station: station)
+        
+        let list = stationLists
+        
+        NavigationStack {
+            List(list.keys.sorted(), id: \.self) { key in
+                let station = list[key]
+                
+                Button {
+                    if stationType == .origin {
+                        flight.origin = station!
+                        //                            flight.destination = nil
+                    } else {
+                        flight.destination = station!
                     }
-                    .padding()
+                    isPresented.toggle()
+                } label: {
+                    StationRow(station: station)
                 }
-                .searchable(text: $searchText)
-                .navigationTitle("Choose Departure")
-                .navigationBarBackButtonHidden(true)
+                .padding()
             }
+            .searchable(text: $searchText)
+            .navigationTitle("Choose Departure")
+            .navigationBarBackButtonHidden(true)
         }
     }
     

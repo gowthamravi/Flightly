@@ -38,35 +38,6 @@ struct FlightsListView: View {
                     }
                 }
                 
-                
-
-//                GeometryReader { geometry in
-//                    ScrollView(.horizontal, showsIndicators: true) {
-//                        LazyHStack {
-//                                          
-//                            ForEach(flight) { data in
-//                                HStack {
-//                                    Text((data.bounds?[0].segments?[0].operatingCarrier?.name!)!)
-//                                    Text((data.bounds?[0].segments?[0].flightNumber!)!)
-//                                    Text((data.bounds?[0].segments?[0].departuredAt!.toUTCToLocal)!)
-//                                    .frame(width: geometry.size.width, height: geometry.size.height - 100)
-//                                }
-//                            }
-//            
-////                            ForEach(flights) { date in
-////                                VStack {
-////                                    Text("<-- \(date.dateOut.toMMMddYYYY) --> ")
-////                                        .padding()
-////                                    List(date.flights) { flight in
-////                                        FlightRow(flight: flight)
-////                                    }
-////                                    .frame(width: geometry.size.width, height: geometry.size.height - 100)
-////                                }
-////                            }
-//                        }
-//                    }
-//                    .scrollTargetBehavior(.paging)
-//                }
             }
         }
     }

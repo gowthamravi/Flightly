@@ -37,6 +37,7 @@
 		A3829BEB2AF2EF5400B927FF /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3829BEA2AF2EF5400B927FF /* Station.swift */; };
 		A3B5EC3A2AF41141002EC7DE /* FlightSearchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */; };
 		A3DAB6A82AF7B62D00B3E1B2 /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = A3DAB6A72AF7B62D00B3E1B2 /* ServiceHandler */; };
+		ED4E73CE2B8F1446004F8882 /* NavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */; };
 		ED862DED2B6EAAD900D8B3F7 /* SwiftMacros in Frameworks */ = {isa = PBXBuildFile; productRef = ED862DEC2B6EAAD900D8B3F7 /* SwiftMacros */; };
 		EDB4F7302B6EAEBD0092D19B /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F72F2B6EAEBD0092D19B /* SwiftBasicFormat */; };
 		EDB4F7322B6EAEBD0092D19B /* SwiftCompilerPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F7312B6EAEBD0092D19B /* SwiftCompilerPlugin */; };
@@ -81,6 +82,7 @@
 		A3829BE62AF2EA3E00B927FF /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
+		ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPath.swift; sourceTree = "<group>"; };
 		EDB4F73F2B76A8090092D19B /* airport.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = airport.json; sourceTree = "<group>"; };
 		EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -172,6 +174,7 @@
 				A37A7A1F2AF59D64003789FC /* Date+Extension.swift */,
 				A341ACA62AF7C8BE00CF69E5 /* String+Extension.swift */,
 				EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */,
+				ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 				A341ACA72AF7C8BE00CF69E5 /* String+Extension.swift in Sources */,
 				A341ACAB2AF7C8ED00CF69E5 /* FareView.swift in Sources */,
 				A37A7A4B2AF7150A003789FC /* Passengers.swift in Sources */,
+				ED4E73CE2B8F1446004F8882 /* NavigationPath.swift in Sources */,
 				A37A7A312AF5AD50003789FC /* StepperView+Extension.swift in Sources */,
 				A37A7A4D2AF71522003789FC /* Passenger.swift in Sources */,
 				A37A7A1E2AF577FF003789FC /* DateView.swift in Sources */,

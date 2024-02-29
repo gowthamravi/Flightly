@@ -8,31 +8,43 @@
 import SwiftUI
 
 struct GuestView: View {
+    @StateObject private var router = Router.shared
     @State private var flight = FlightSearch()
     
     var body: some View {
-        NavigationStack {
-            NavigationLink {
+        NavigationStack(path: $router.path) {
+            VStack(spacing: 30) {
+                Spacer()
+                    .frame(height: 30)
+                Text("Flightly")
+                    .font(.custom("Avenir-HeavyOblique", size: 30))
+                    .foregroundColor(Color(red: 238/255, green: 119/255, blue: 70/255))
+                Spacer()
+                    .frame(height: 100)
+                Image("banner")
+                Spacer()
+                Button("Continue") {
+                    router.path.append("Continue")
+                }
+                .frame(height: 50)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .background(Color(red: 238/255, green: 119/255, blue: 70/255))
+                .clipShape(Capsule())
+                .font(.custom("Avenir-HeavyOblique", size: 20))
+                .padding()
+            }
+            .navigationDestination(for: String.self) { item in
                 FlightSearchView()
                     .environment(flight)
-                    .navigationBarBackButtonHidden(true)
-            } label: {
-                Button("") {
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .center)
-                .background(Color.yellow)
-                .foregroundStyle(.black)
-                .clipShape(Capsule())
-                .overlay {
-                    Text("Continue as a Guest")
-                        .foregroundStyle(.black)
-                }
             }
-            .padding()
-        }
-        .onAppear {
+        } .onAppear {
             flight.start()
         }
     }
 }
+
+#Preview {
+    GuestView()
+}
+

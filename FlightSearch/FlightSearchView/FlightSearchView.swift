@@ -10,18 +10,30 @@ import ServiceHandler
 import ActivityIndicatorView
 
 struct FlightSearchView: View {
-    @Environment(FlightSearch.self) private var flight
+    @EnvironmentObject private var flight: FlightSearch
+    @EnvironmentObject private var router: Router
     @State private var showLoadingIndicator: Bool = false
-
+    
     var body: some View {
-        ZStack {
+        NavigationStack(path: $router.path) {
+            
+            VStack(alignment: .leading) {
+                Text("Let's")
+                    .font(.title2)
+                    .frame(alignment: .leading)
+                Text("Explore")
+                    .font(.title)
+                    .frame(alignment: .leading)
+            } .frame(maxWidth: .infinity, alignment: .topLeading)
+            VStack(alignment: .leading, spacing: 20) {
 
-        VStack(spacing: 20) {
                 StationView(stationType: .origin)
                 StationView(stationType: .destination)
                 
-                DateView(flight: flight)
-                PassengerView(flight: flight)
+                DateView()
+                    .environmentObject(flight)
+                PassengerView()
+                    .environmentObject(flight)
                 
                 Spacer()
                 
@@ -37,4 +49,10 @@ struct FlightSearchView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
     }
+}
+
+#Preview {
+    FlightSearchView()
+        .environmentObject(FlightSearch(service: FlightSearchingService(service: NetworkService())))
+        .environmentObject(Router.shared)
 }

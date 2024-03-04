@@ -8,11 +8,10 @@
 import Foundation
 import ServiceHandler
 
-@Observable
-class FlightSearch {
+class FlightSearch: ObservableObject {
     var allStations: [String: Station] = [:]
-    var origin: Station?
-    var destination: Station?
+    @Published var origin: Station?
+    @Published var destination: Station?
     var fromDate: Date = Date()
     var passengersList: (adult: Int, teen: Int, childrens: Int, infants: Int) = (1, 0, 0, 0)
     var flights: [Flights] = []
@@ -61,3 +60,4 @@ class FlightSearch {
         }
     }
 }
+

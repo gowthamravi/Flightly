@@ -10,7 +10,7 @@ import ServiceHandler
 import ActivityIndicatorView
 
 struct LetsGoView: View {
-    @Environment(FlightSearch.self) private var flightSearch
+    @EnvironmentObject private var flight: FlightSearch
     @State private var isPresented: Bool = false
     @State private var isErrorPresented: Bool = false
     @Binding var showLoadingIndicator: Bool
@@ -22,7 +22,7 @@ struct LetsGoView: View {
                 Task {
                     do {
                         showLoadingIndicator.toggle()
-                        try await flightSearch.searchFlight()
+                        try await flight.searchFlight()
                         isPresented.toggle()
                         showLoadingIndicator.toggle()
                     } catch {
@@ -34,7 +34,7 @@ struct LetsGoView: View {
                     .customBoarderStyle()
             }
             .sheet(isPresented: $isPresented) {
-                FlightsListView(flights: flightSearch.flights, isPresented: $isPresented)
+                FlightsListView(flights: flight.flights, isPresented: $isPresented)
             }
             .sheet(isPresented: $isErrorPresented) {
                 ContentUnAvailableCustomView(isPresented: $isErrorPresented)

@@ -15,8 +15,7 @@ enum StationType {
 struct StationView: View {
     let stationType: StationType
     @State private var isPresented: Bool = false
-    @Environment(FlightSearch.self) private var flight
-    
+    @EnvironmentObject private var flight: FlightSearch    
     var body: some View {
         Button {
             isPresented.toggle()
@@ -27,7 +26,8 @@ struct StationView: View {
             .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
-            StationListView(flight: flight, isPresented: $isPresented, stationType: stationType)
+            StationListView(isPresented: $isPresented, stationType: stationType)
+                .environmentObject(flight)
         }
     }
 }

@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct GuestView: View {
-    @StateObject private var router = Router.shared
-    @State private var flight = FlightSearch()
+    @State private var router = NavigationPath()
+    @StateObject private var flight = FlightSearch()
     
     var body: some View {
-        NavigationStack(path: $router.path) {
+        NavigationStack(path: $router) {
             VStack(spacing: 30) {
                 Spacer()
                     .frame(height: 30)
@@ -24,20 +24,16 @@ struct GuestView: View {
                 Image("banner")
                 Spacer()
                 Button("Continue") {
-                    router.path.append("Continue")
+                    self.router.append("Continue")
                 }
-                .frame(height: 50)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .background(Color(red: 238/255, green: 119/255, blue: 70/255))
-                .clipShape(Capsule())
-                .font(.custom("Avenir-HeavyOblique", size: 20))
-                .padding()
+                .buttonStyle(FlightlyButton())
             }
             .navigationDestination(for: String.self) { item in
-                FlightSearchView()
-                    .environment(flight)
+                MainView()
+                    .environmentObject(flight)
+                    .navigationBarBackButtonHidden()
             }
+           
         } .onAppear {
             flight.start()
         }

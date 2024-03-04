@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DateView: View {
-    @Bindable var flight: FlightSearch
+    @EnvironmentObject var flight: FlightSearch
     @State private var isPresented: Bool = false
 
     var body: some View {

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PassengerView: View {
     @State private var isPresented: Bool = false
-    @Bindable var flight: FlightSearch
+    @EnvironmentObject var flight: FlightSearch
     
     var body: some View {
         Button {

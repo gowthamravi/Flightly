@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StationListView: View {
-    @Bindable var flight: FlightSearch
+    @EnvironmentObject private var flight: FlightSearch
     @Binding var isPresented: Bool
     let stationType: StationType
     @State private var searchText = ""

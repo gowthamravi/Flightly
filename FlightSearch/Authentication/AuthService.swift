@@ -1,94 +1,91 @@
 import Foundation
-import AuthenticationServices
+import AuthenticationServices // For ASAuthorizationAppleIDCredential in social login methods
 
-enum AuthError: Error, LocalizedError {
-    case invalidEmailOrPassword
+// Protocol for the authentication service to allow for mocking in tests
+protocol AuthServiceProtocol {
+    func login(email: String, password: String) async throws -> String
+    func loginWithApple(credential: ASAuthorizationAppleIDCredential) async throws -> String
+    func loginWithGoogle() async throws -> String
+}
+
+enum AuthServiceError: Error, LocalizedError {
+    case invalidCredentials
+    case unauthorized // Specific error for HTTP 401 response
     case networkError(Error)
-    case unknownError
-    case appleSignInError(Error)
-    case googleSignInError(Error)
+    case serverError(statusCode: Int)
+    case decodingError(Error)
+    case unknown
 
     var errorDescription: String? {
         switch self {
-        case .invalidEmailOrPassword: return "Incorrect email or password."
-        case .networkError(let error): return "Network error: \(error.localizedDescription)"
-        case .unknownError: return "An unexpected error occurred. Please try again."
-        case .appleSignInError(let error): return "Apple Sign-In failed: \(error.localizedDescription)"
-        case .googleSignInError(let error): return "Google Sign-In failed: \(error.localizedDescription)"
+        case .invalidCredentials:
+            return "Invalid email or password provided."
+        case .unauthorized:
+            return "Incorrect email or password." // User-friendly message for 401
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .serverError(let statusCode):
+            return "Server error with status code: \(statusCode)"
+        case .decodingError(let error):
+            return "Data decoding error: \(error.localizedDescription)"
+        case .unknown:
+            return "An unknown error occurred. Please try again."
         }
     }
-}
-
-protocol AuthServiceProtocol {
-    func login(email: String, password: String) async throws -> String
-    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws -> String
-    func signInWithGoogle() async throws -> String // Placeholder for Google SDK integration
 }
 
 class AuthService: AuthServiceProtocol {
-    private let keychainService: KeychainServiceProtocol
+    // In a real application, this would use URLSession to make actual API calls.
+    // For this task, we will simulate network responses and errors.
 
-    init(keychainService: KeychainServiceProtocol = KeychainService()) {
-        self.keychainService = keychainService
-    }
-
-    // Simulates an API call for email/password login
     func login(email: String, password: String) async throws -> String {
-        // CRITICAL: Ensure password is NEVER logged in console.
-        // print("Attempting login for email: \(email), password: \(password)") // DO NOT UNCOMMENT THIS IN PRODUCTION
-        
         // Simulate network delay
-        try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // 2 seconds
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
 
-        // Simulate API response: 401 for specific credentials, success otherwise
-        if email == "test@example.com" && password == "password" {
-            // Simulate 401 Unauthorized
-            throw AuthError.invalidEmailOrPassword
-        } else if email == "error@example.com" {
-            // Simulate a generic network error
-            throw AuthError.networkError(URLError(.notConnectedToInternet))
+        // Simulate API responses based on input
+        if email == "user@example.com" && password == "password123" {
+            return "mock_auth_token_123" // Simulate successful login
+        } else if email == "unauthorized@example.com" && password == "wrong" {
+            throw AuthServiceError.unauthorized // Simulate 401 Unauthorized
+        } else if email == "servererror@example.com" {
+            throw AuthServiceError.serverError(statusCode: 500) // Simulate a 500 Internal Server Error
         } else {
-            // Simulate successful login with a dummy token
-            let authToken = "mockAuthToken_\(UUID().uuidString)"
-            // Store token in Keychain
-            if let tokenData = authToken.data(using: .utf8) {
-                _ = keychainService.save(key: "authToken", data: tokenData)
-            }
-            return authToken
+            throw AuthServiceError.invalidCredentials // Simulate other login failures
         }
     }
 
-    // Simulates Apple Sign-In processing
-    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws -> String {
-        // Simulate network delay
-        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 second
+    func loginWithApple(credential: ASAuthorizationAppleIDCredential) async throws -> String {
+        // Simulate network delay for backend call
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
 
-        // In a real app, you would send `credential.identityToken` and `credential.authorizationCode`
-        // to your backend for verification and session creation.
-        // For this simulation, we'll just return a success token.
+        // In a real application, you would send the `credential.identityToken`
+        // and `credential.authorizationCode` to your backend for verification.
+        // The backend would then authenticate the user and return an app-specific token.
         
-        if let identityToken = credential.identityToken, let tokenString = String(data: identityToken, encoding: .utf8) {
-            let authToken = "mockAppleAuthToken_\(UUID().uuidString)"
-            if let tokenData = authToken.data(using: .utf8) {
-                _ = keychainService.save(key: "authToken", data: tokenData)
-            }
-            return authToken
-        } else {
-            throw AuthError.appleSignInError(NSError(domain: "AuthService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to get identity token from Apple."]))
-        }
+        // For demonstration, print relevant parts and simulate success.
+        print("\n--- Apple Sign-In Credential Received ---")
+        print("User ID: \(credential.user)")
+        print("Given Name: \(credential.fullName?.givenName ?? "N/A")")
+        print("Email: \(credential.email ?? "N/A")")
+        // NEVER LOG identityToken or authorizationCode directly in production, only send to backend.
+        // print("Identity Token (base64): \(credential.identityToken?.base64EncodedString() ?? "N/A")")
+        // print("Authorization Code (base64): \(credential.authorizationCode?.base64EncodedString() ?? "N/A")")
+        print("------------------------------------------\n")
+
+        // Simulate a token from your backend
+        return "mock_apple_auth_token_456"
     }
 
-    // Placeholder for Google Sign-In SDK flow
-    func signInWithGoogle() async throws -> String {
-        // Simulate network delay
-        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 second
-        
-        // In a real app, this would involve calling the Google Sign-In SDK and handling its callbacks.
-        // For this simulation, we'll just return a success token.
-        let authToken = "mockGoogleAuthToken_\(UUID().uuidString)"
-        if let tokenData = authToken.data(using: .utf8) {
-            _ = keychainService.save(key: "authToken", data: tokenData)
-        }
-        return authToken
+    func loginWithGoogle() async throws -> String {
+        // Simulate network delay for backend call
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // In a real application, after the Google Sign-In SDK completes, you would obtain
+        // an ID token or access token and send it to your backend for verification.
+        // The backend would then authenticate the user and return an app-specific token.
+        print("Simulating Google Sign-In backend call and token exchange.")
+
+        // Simulate a token from your backend
+        return "mock_google_auth_token_789"
     }
 }

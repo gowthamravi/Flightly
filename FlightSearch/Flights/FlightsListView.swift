@@ -34,7 +34,7 @@ struct FlightsListView: View {
                             Text("-->")
                             Text((data.bounds?[0].segments?[0].flightNumber!)!)
                         }
-                        Text((data.bounds?[0].segments?[0].departuredAt!.toMMMddYYYY)!)
+//                        Text((data.bounds?[0].segments?[0].departuredAt!.toMMMddYYYY)!)
                     }
                 }
                 

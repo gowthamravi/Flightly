@@ -1,42 +1,30 @@
-//
-//  ContentView.swift
-//  FlightSearch
-//
-//  Created by Norman D on 31/10/2023.
-//
-
 import SwiftUI
-import ServiceHandler
 
-struct StationListView: View {
-    let model: StationListViewModel
+struct ContentView: View {
+    // Assuming AuthViewModel is provided from the environment or instantiated here.
+    // Or, a top-level AppState could manage isAuthenticated.
+    @StateObject private var authViewModel = AuthViewModel()
     
     var body: some View {
-        NavigationStack {
-            NavigationLink {
-                FlightSearchView(stationLists: model.stationList, 
-                                 model: FlightSearchViewModel(
-                                    service: FlightSearchService(
-                                        service: NetworkService()
-                                    )
-                                 )
-                )
-                    .navigationBarBackButtonHidden(true)
-            } label: {
-                Button("Continue as a Guest") {
+        Group {
+            if authViewModel.isAuthenticated {
+                // User is authenticated, show main app content
+                Text("Welcome to Flight Search!")
+                // You would typically navigate to MainView or a dashboard here.
+                // For example: MainView()
+                Button("Log Out") { // Added for testing purposes
+                    authViewModel.logout()
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-                .background(Color.yellow)
-                .foregroundStyle(.black)
-                .clipShape(Capsule())
-            }
-            .padding()
-        }
-        .onAppear {
-            Task {
-                try await model.fetch()
+            } else {
+                // User is not authenticated, show AuthView
+                AuthView(viewModel: authViewModel) // Pass the same instance
             }
         }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }

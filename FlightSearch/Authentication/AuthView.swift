@@ -1,205 +1,221 @@
 import SwiftUI
-import AuthenticationServices // For Sign in with Apple
-
-// Assuming ActivityIndicator is defined in FlightSearch/Extensions/ActivityIndicator.swift
-// and is a SwiftUI View.
-struct ActivityIndicator: View {
-    var isAnimating: Bool
-    var style: UIActivityIndicatorView.Style = .medium
-
-    var body: some View {
-        if isAnimating {
-            // Using a simple Text here to avoid direct UIKit in this example if the original isn't accessible.
-            // In a real app, use UIActivityIndicatorView wrapped in UIViewRepresentable or an actual SwiftUI spinner.
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-        }
-    }
-}
+import AuthenticationServices // Required for ASAuthorizationAppleIDButton
 
 struct AuthView: View {
     @StateObject private var viewModel = AuthViewModel()
-    @Environment(\.colorScheme) var colorScheme // For Apple button styling
-    
+    @Environment(\.colorScheme) var colorScheme // For adaptive Apple Sign-In button style
+
     var body: some View {
-        NavigationView {
+        NavigationView { // Embed in NavigationView for potential navigation bar or presentation
             ScrollView {
                 VStack(spacing: 20) {
-                    appLogo
-                    
-                    emailInput
-                    
-                    passwordInput
-                    
-                    forgotPasswordButton
-                    
-                    primaryLoginButton
-                    
-                    socialLoginDivider
-                    
-                    socialLoginButtons
-                }
-                .padding()
-                .alert("Login Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-                    Button("OK") { viewModel.errorMessage = nil }
-                } message: {
-                    Text(viewModel.errorMessage ?? "")
-                }
-                .alert("Login Successful", isPresented: $viewModel.showLoginSuccessAlert) {
-                    Button("OK") { viewModel.showLoginSuccessAlert = false }
-                } message: {
-                    Text("You have successfully logged in!")
-                }
-                .disabled(viewModel.isLoading) // Disable interaction when loading
-            }
-            .navigationTitle("") // Hide default navigation title
-            .navigationBarHidden(true) // Hide navigation bar completely
-            .overlay(alignment: .center) { // Show activity indicator over the whole view
-                if viewModel.isLoading {
-                    Color.black.opacity(0.4).ignoresSafeArea()
-                    ActivityIndicator(isAnimating: true)
-                }
-            }
-        }
-    }
-    
-    // MARK: - UI Components
-    private var appLogo: some View {
-        Image("AppLogoPlaceholder") // Use your actual App Logo asset name
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 150, height: 150)
-            .padding(.bottom, 20)
-    }
-    
-    private var emailInput: some View {
-        VStack(alignment: .leading) {
-            TextField("Email address", text: $viewModel.email)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-            
-            if let message = viewModel.emailValidationMessage {
-                Text(message)
-                    .font(.caption)
-                    .foregroundColor(.red)
-                    .padding(.horizontal)
-            }
-        }
-    }
-    
-    private var passwordInput: some View {
-        SecureField("Password", text: $viewModel.password)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(.horizontal)
-    }
-    
-    private var forgotPasswordButton: some View {
-        HStack {
-            Spacer()
-            Button("Forgot Password?") {
-                viewModel.forgotPassword()
-            }
-            .font(.footnote)
-            .padding(.trailing)
-        }
-    }
-    
-    private var primaryLoginButton: some View {
-        Button(action: {
-            Task { await viewModel.loginWithEmailPassword() }
-        }) {
-            Text("Log In")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue) // Brand color
-                .cornerRadius(10)
-        }
-        .disabled(viewModel.isLoginButtonDisabled)
-        .padding(.horizontal)
-    }
-    
-    private var socialLoginDivider: some View {
-        HStack {
-            VStack { Divider() }.padding(.leading)
-            Text("Or continue with")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            VStack { Divider() }.padding(.trailing)
-        }
-        .padding(.vertical)
-    }
-    
-    private var socialLoginButtons: some View {
-        VStack(spacing: 15) {
-            // Sign in with Apple Button
-            SignInWithAppleButton(
-                .signIn,
-                onRequest: { request in
-                    request.requestedScopes = [.fullName, .email]
-                },
-                onCompletion: { result in
-                    switch result {
-                    case .success(let authorization):
-                        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                            Task { @MainActor in
-                                await viewModel.signInWithApple(credential: appleIDCredential)
-                            }
-                        }
-                    case .failure(let error):
-                        // Error handled by AuthViewModel's `authorizationController(didCompleteWithError:)`
-                        // For SwiftUI wrapper, we can also set the error here directly if needed.
-                        viewModel.isLoading = false // Ensure loading is reset
-                        viewModel.errorMessage = AuthError.appleSignInError(error).errorDescription
-                    }
-                }
-            )
-            .signInWithAppleButtonStyle(
-                colorScheme == .dark ? .white : .black
-            )
-            .frame(height: 50)
-            .padding(.horizontal)
-            
-            // Sign in with Google Button (Custom)
-            Button(action: {
-                Task { await viewModel.signInWithGoogle() }
-            }) {
-                HStack {
-                    Image("GoogleGLogo") // Assuming you have a 'GoogleGLogo' asset
+                    Image("AppLogo") // Assuming 'AppLogo' asset exists in Assets.xcassets
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                    Text("Sign in with Google")
-                        .font(.headline)
-                        .foregroundColor(.black)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 150, height: 150)
+                        .padding(.top, 50)
+                        .accessibilityLabel("App Logo")
+
+                    Text("Welcome Back")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.bottom, 20)
+
+                    VStack(alignment: .leading, spacing: 15) {
+                        TextField("Email", text: $viewModel.email)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(
+                                        viewModel.email.isEmpty || viewModel.email.isValidEmail ? Color.clear : Color.red,
+                                        lineWidth: 1
+                                    )
+                            )
+                            .accessibilityIdentifier("EmailTextField")
+
+                        if !viewModel.email.isEmpty && !viewModel.email.isValidEmail {
+                            Text("Invalid email format")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.leading, 5)
+                        }
+
+                        SecureField("Password", text: $viewModel.password)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .accessibilityIdentifier("PasswordSecureField")
+
+                        HStack {
+                            Spacer()
+                            Button("Forgot Password?") {
+                                // TODO: Implement navigation or action for forgot password
+                                print("Forgot password tapped")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.accentColor) // Use app's accent color or brand color
+                            .accessibilityIdentifier("ForgotPasswordButton")
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    Button {
+                        viewModel.login()
+                    } label: {
+                        if viewModel.isLoading { // Show activity indicator when loading
+                            ActivityIndicator(isAnimating: .constant(true), style: .medium)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .background(Color.accentColor.opacity(0.8)) // Slightly darker when loading
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        } else {
+                            Text("Log In")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .background(viewModel.isLoginButtonDisabled ? Color(.systemGray4) : Color.accentColor) // Disabled state color
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .disabled(viewModel.isLoginButtonDisabled)
+                    .padding(.horizontal)
+                    .accessibilityIdentifier("LoginButton")
+
+                    HStack {
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(Color(.systemGray3))
+                        Text("Or continue with")
+                            .font(.caption)
+                            .foregroundColor(Color(.systemGray))
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(Color(.systemGray3))
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+
+                    VStack(spacing: 15) {
+                        // Sign in with Apple Button
+                        SignInWithAppleButtonView(
+                            type: ASAuthorizationAppleIDButton.ButtonType.signIn,
+                            style: colorScheme == .dark ? ASAuthorizationAppleIDButton.Style.white : ASAuthorizationAppleIDButton.Style.black, // Adaptive style based on system theme
+                            onCompletion: viewModel.handleAppleSignIn
+                        )
+                        .frame(height: 50) // Standard height for social login buttons
+                        .padding(.horizontal)
+                        .cornerRadius(10) // Match other button styles
+                        .accessibilityIdentifier("AppleSignInButton")
+
+                        // Sign in with Google Button
+                        Button {
+                            viewModel.handleGoogleSignIn()
+                        } label: {
+                            HStack {
+                                Image("google_logo") // Assuming 'google_logo' asset exists
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 24, height: 24) // Google logo size
+                                Text("Sign in with Google")
+                                    .font(.headline)
+                                    .foregroundColor(.black) // Google button text is typically black
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color(.systemGray4), lineWidth: 1) // Light gray border
+                            )
+                        }
+                        .padding(.horizontal)
+                        .accessibilityIdentifier("GoogleSignInButton")
+                    }
+
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
             }
-            .padding(.horizontal)
+            .alert("Login Error", isPresented: Binding<Bool>(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } } // Clear error message when alert is dismissed
+            )) {
+                Button("OK") { }
+            } message: {
+                Text(viewModel.errorMessage ?? "An unknown error occurred.")
+            }
         }
     }
 }
 
-struct AuthView_Previews: PreviewProvider {
-    static var previews: some View {
-        AuthView()
+// MARK: - UIViewRepresentable for ASAuthorizationAppleIDButton
+// This wrapper is necessary to use UIKit's ASAuthorizationAppleIDButton in SwiftUI.
+struct SignInWithAppleButtonView: UIViewRepresentable {
+    typealias UIViewType = ASAuthorizationAppleIDButton
+    var type: ASAuthorizationAppleIDButton.ButtonType
+    var style: ASAuthorizationAppleIDButton.Style
+    var onCompletion: (ASAuthorization?, Error?) -> Void // Callback for authorization result
+
+    func makeUIView(context: Context) -> ASAuthorizationAppleIDButton {
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: type, authorizationButtonStyle: style)
+        button.addTarget(context.coordinator, action: #selector(Coordinator.didTapButton), for: .touchUpInside)
+        return button
+    }
+
+    func updateUIView(_ uiView: ASAuthorizationAppleIDButton, context: Context) {
+        // Update button style if needed (e.g., if colorScheme changes dynamically after init)
+        // uiView.authorizationButtonStyle = style
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self, onCompletion: onCompletion)
+    }
+
+    class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+        var parent: SignInWithAppleButtonView
+        var onCompletion: (ASAuthorization?, Error?) -> Void
+
+        init(_ parent: SignInWithAppleButtonView, onCompletion: @escaping (ASAuthorization?, Error?) -> Void) {
+            self.parent = parent
+            self.onCompletion = onCompletion
+        }
+
+        @objc func didTapButton() {
+            let request = ASAuthorizationAppleIDProvider().createRequest()
+            request.requestedScopes = [.fullName, .email] // Request user's full name and email
+
+            let controller = ASAuthorizationController(authorizationRequests: [request])
+            controller.delegate = self
+            controller.presentationContextProvider = self
+            controller.performRequests()
+        }
+
+        // MARK: - ASAuthorizationControllerDelegate
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+            onCompletion(authorization, nil)
+        }
+
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+            onCompletion(nil, error)
+        }
+
+        // MARK: - ASAuthorizationControllerPresentationContextProviding
+        func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+            // Use the first window of the active scene for the presentation context
+            guard let window = UIApplication.shared.connectedScenes
+                .filter({ $0.activationState == .foregroundActive })
+                .map({ $0 as? UIWindowScene })
+                .compactMap({ $0 })
+                .first?.windows
+                .first else { fatalError("No active window for Apple Sign-In presentation.") }
+            return window
+        }
     }
 }
-
-// MARK: - Placeholder for App Logo and Google Logo assets
-// In a real project, these would be added to your Assets.xcassets.
-// For preview purposes, you can create dummy assets or omit the images if they cause build errors.
-// Example usage in Assets.xcassets:
-// - AppLogoPlaceholder (Image Set)
-// - GoogleGLogo (Image Set)

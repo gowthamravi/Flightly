@@ -1,46 +1,28 @@
-//
-//  MainView.swift
-//  FlightSearch
-//
-//  Created by Gowtham R on 29/02/24.
-//
-
 import SwiftUI
-import ServiceHandler
 
 struct MainView: View {
-    @EnvironmentObject var flight: FlightSearch
-    @StateObject private var router = Router.shared
+    @EnvironmentObject var authViewModel: AuthViewModel // Use EnvironmentObject to receive the shared instance
+
     var body: some View {
-        TabView {
-            FlightSearchView()
-                .environmentObject(flight)
-                .environmentObject(router)
-                .tabItem {
-                    Label(
-                        title: {  },
-                        icon: { Image(systemName: "house") }
-                    )
-                }
-            FavouriteView()
-                .tabItem {
-                    Label(
-                        title: { },
-                        icon: { Image(systemName: "suit.heart") }
-                    )
-                }
-            FavouriteView()
-                .tabItem {
-                    Label(
-                        title: { },
-                        icon: { Image(systemName: "person.crop.circle") }
-                    )
-                }
+        VStack {
+            Text("Welcome to the Main App!")
+                .font(.largeTitle)
+                .padding()
+
+            Button("Log Out") {
+                authViewModel.logout()
+            }
+            .padding()
+            .background(Color.red)
+            .foregroundColor(.white)
+            .cornerRadius(10)
         }
     }
 }
 
-#Preview {
-    MainView()
-        .environmentObject(FlightSearch(service: FlightSearchingService(service: NetworkService())))
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView()
+            .environmentObject(AuthViewModel()) // Provide a mock AuthViewModel for previews
+    }
 }

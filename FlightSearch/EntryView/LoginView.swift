@@ -3,99 +3,96 @@ import SwiftUI
 struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
-    @State private var isPasswordVisible = false
-    @Environment("navigationPath") private var navigationPath: Binding<NavigationPath>
+    @State private var isPasswordObscured = true
+    @EnvironmentObject var navigationPath: NavigationPath
 
     var body: some View {
-        VStack {
-            Image("AppLogo") // Assuming you have an app logo image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150)
-                .padding(.bottom, 50)
-
-            Text("Welcome Back!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.bottom, 10)
-
-            Text("Log in to your account")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .padding(.bottom, 40)
-
-            // Username Field
-            TextField("Username", text: $username)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-                .padding(.horizontal)
-                .autocapitalization(.none)
-
-            // Password Field
-            HStack {
-                if isPasswordVisible {
-                    TextField("Password", text: $password)
-                } else {
-                    SecureField("Password", text: $password)
-                }
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-            .padding(.horizontal)
-
-            HStack {
+        NavigationView {
+            VStack(spacing: 20) {
                 Spacer()
+
+                Image(systemName: "airplane.departure.curve")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(.blue)
+
+                Text("Welcome Back!")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                TextField("Username", text: $username)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+
+                HStack {
+                    if isPasswordObscured {
+                        SecureField("Password", text: $password)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.leading)
+                    } else {
+                        TextField("Password", text: $password)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.leading)
+                    }
+
+                    Button(action: {
+                        isPasswordObscured.toggle()
+                    }) {
+                        Image(systemName: isPasswordObscured ? "eye.slash" : "eye")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.trailing)
+                }
+
                 Button(action: {
-                    isPasswordVisible.toggle()
+                    // TODO: Implement actual login logic
+                    print("Username: \(username)")
+                    print("Password: \(password)")
+                    // For now, navigate to the main search view
+                    navigationPath.path.append("FlightSearchView")
                 }) {
-                    Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
-                        .foregroundColor(.secondary)
+                    Text("Login")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
-                .padding(.trailing, 8)
-            }
-            .padding(.horizontal)
+                .padding(.horizontal)
+                .disabled(username.isEmpty || password.isEmpty)
 
-            // Forgot Password
-            HStack {
+                HStack {
+                    Text("Don't have an account?")
+                    Button("Sign Up") {
+                        // TODO: Implement Sign Up navigation
+                    }
+                }
+                .foregroundColor(.blue)
+
                 Spacer()
-                Button("Forgot Password?") {
-                    // Action for forgot password
+
+                Button("Continue as Guest") {
+                    // TODO: Implement Continue as Guest navigation
+                    navigationPath.path.append("MainView")
                 }
-                .padding(.top, 5)
-                .padding(.trailing)
+                .padding(.bottom)
+                .foregroundColor(.blue)
             }
-
-            // Login Button
-            Button("Login") {
-                // Action for login
-                // Dummy navigation for now
-                navigationPath.wrappedValue.append("FlightSearch")
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.top, 30)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-
-            Spacer()
-
-            // Sign Up Button
-            HStack {
-                Text("Don't have an account?")
-                Button("Sign Up") {
-                    // Action for sign up
-                }
-            }
-            .padding(.bottom, 20)
+            .navigationBarTitle("Flight Finder", displayMode: .inline)
         }
-        .padding()
-        .navigationBarHidden(true)
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView().environmentObject(NavigationPath())
     }
 }

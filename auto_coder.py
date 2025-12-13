@@ -20,7 +20,7 @@ JIRA_USER = os.getenv("JIRA_USER")
 JIRA_TOKEN = os.getenv("JIRA_API_TOKEN")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-XCODE_SCHEME = os.getenv("XCODE_SCHEME", "Flightly") 
+XCODE_SCHEME = os.getenv("XCODE_SCHEME", "FlightSearch") 
 DEVICE_NAME = os.getenv("XCODE_DEVICE", "iPhone 15")
 REPO_PATH = "./"
 

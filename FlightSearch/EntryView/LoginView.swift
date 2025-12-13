@@ -1,99 +1,65 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
-    @State private var isPasswordSecure = true
-    @State private var showAlert = false
-    @State private var alertMessage = ""
     @State private var navigateToMainView = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Image("appLogo") // Replace with your actual app logo image name
+                Image(systemName: "airplane.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .padding(.bottom, 50)
-
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                HStack {
-                    if isPasswordSecure {
-                        SecureField("Password", text: $password)
-                    } else {
-                        TextField("Password", text: $password)
-                    }
-                }
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-
-                HStack {
-                    Spacer()
-                    Button(isPasswordSecure ? "Show" : "Hide") {
-                        isPasswordSecure.toggle()
-                    }
+                    .frame(width: 100, height: 100)
                     .foregroundColor(.blue)
-                }
+
+                Text("Flight Finder")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                TextField("Username", text: $username)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
+
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
 
                 Button("Login") {
-                    loginTapped()
+                    // TODO: Implement actual login logic
+                    // For now, navigate on button tap for demo purposes
+                    navigateToMainView = true
                 }
-                .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(Color.blue)
-                .cornerRadius(8)
-                
-                Button("Forgot Password?") {
-                    // Action for forgot password
-                }
-                .foregroundColor(.blue)
-
-                Spacer()
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .disabled(username.isEmpty || password.isEmpty)
 
                 NavigationLink(destination: MainView(), isActive: $navigateToMainView) {
                     EmptyView()
                 }
+                .hidden()
+                
+                Spacer()
+                
+                HStack {
+                    Text("Don't have an account?")
+                    Button("Sign Up") {
+                        // TODO: Implement Sign Up navigation
+                    }
+                }
+                .foregroundColor(.blue)
             }
             .padding()
-            .navigationBarHidden(true)
-            .alert(isPresented: $showAlert, content: {
-                Alert(title: Text("Login Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-            })
+            .navigationBarTitle("Welcome", displayMode: .inline)
         }
-    }
-
-    private func loginTapped() {
-        // Basic validation (can be expanded)
-        if email.isEmpty || password.isEmpty {
-            alertMessage = "Please enter both email and password."
-            showAlert = true
-            return
-        }
-
-        // Simulate login attempt
-        // In a real app, this would involve API calls
-        if isValidEmail(email) {
-            // Simulate successful login
-            navigateToMainView = true
-        } else {
-            alertMessage = "Invalid email format."
-            showAlert = true
-        }
-    }
-    
-    // Basic email validation function
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
-        return emailPredicate.evaluate(with: email)
     }
 }
 

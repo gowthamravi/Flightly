@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		46B7909C2EED772A00C674EA /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B790952EED772A00C674EA /* AuthService.swift */; };
+		46B7909D2EED772A00C674EA /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B790972EED772A00C674EA /* AuthViewModel.swift */; };
+		46B7909E2EED772A00C674EA /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B790962EED772A00C674EA /* AuthView.swift */; };
+		46B7909F2EED772A00C674EA /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B790992EED772A00C674EA /* KeychainService.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
 		A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */; };
@@ -55,6 +59,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		46B790952EED772A00C674EA /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		46B790962EED772A00C674EA /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		46B790972EED772A00C674EA /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		46B790992EED772A00C674EA /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
 		A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsListView.swift; sourceTree = "<group>"; };
 		A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFlightView.swift; sourceTree = "<group>"; };
@@ -114,6 +122,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		46B7909A2EED772A00C674EA /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				46B790952EED772A00C674EA /* AuthService.swift */,
+				46B790962EED772A00C674EA /* AuthView.swift */,
+				46B790972EED772A00C674EA /* AuthViewModel.swift */,
+				46B790992EED772A00C674EA /* KeychainService.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
 		A341ACA12AF7B9C400CF69E5 /* Flights */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +171,7 @@
 				A341ACA12AF7B9C400CF69E5 /* Flights */,
 				A37A7A322AF5ADE8003789FC /* Extensions */,
 				A3829BE22AF2EA0E00B927FF /* BaseURL.swift */,
+				46B7909A2EED772A00C674EA /* Authentication */,
 				A3829BE42AF2EA2B00B927FF /* Requests.swift */,
 				A3829BEA2AF2EF5400B927FF /* Station.swift */,
 				A341AC9F2AF7B7F700CF69E5 /* Trips.swift */,
@@ -370,6 +390,10 @@
 				A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */,
 				A37A7A482AF714AD003789FC /* StationRow.swift in Sources */,
 				A3829BEB2AF2EF5400B927FF /* Station.swift in Sources */,
+				46B7909C2EED772A00C674EA /* AuthService.swift in Sources */,
+				46B7909D2EED772A00C674EA /* AuthViewModel.swift in Sources */,
+				46B7909E2EED772A00C674EA /* AuthView.swift in Sources */,
+				46B7909F2EED772A00C674EA /* KeychainService.swift in Sources */,
 				EDBDC2D82B90EA2C0016D07B /* MainView.swift in Sources */,
 				A37A7A402AF5C402003789FC /* LetsGoView.swift in Sources */,
 				EDBDC2DA2B90EB8D0016D07B /* FavouriteView.swift in Sources */,

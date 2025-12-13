@@ -67,7 +67,7 @@ struct AuthView: View {
     private var appLogo: some View {
         Image("AppLogoPlaceholder") // Use your actual App Logo asset name
             .resizable()
-            .aspectRatio(.fill, contentMode: .fit)
+            .aspectRatio(contentMode: .fit)
             .frame(width: 150, height: 150)
             .padding(.bottom, 20)
     }

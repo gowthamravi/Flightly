@@ -3,119 +3,97 @@ import SwiftUI
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
-    @State private var rememberMe = false
+    @State private var isPasswordSecure = true
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     @State private var navigateToMainView = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Image("AppIcon") // Assuming you have an app icon named "AppIcon"
+                Image("appLogo") // Replace with your actual app logo image name
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .padding(.bottom, 40)
+                    .frame(width: 150, height: 150)
+                    .padding(.bottom, 50)
 
                 TextField("Email", text: $email)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
-                    .modifier(BorderedView())
-
-                SecureField("Password", text: $password)
-                    .modifier(BorderedView())
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
 
                 HStack {
-                    Toggle(isOn: $rememberMe) {
-                        Text("Remember Me")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                    if isPasswordSecure {
+                        SecureField("Password", text: $password)
+                    } else {
+                        TextField("Password", text: $password)
                     }
-                    .padding(.leading)
+                }
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(8)
+
+                HStack {
                     Spacer()
-                    Button("Forgot Password?") {
-                        // Action for forgot password
+                    Button(isPasswordSecure ? "Show" : "Hide") {
+                        isPasswordSecure.toggle()
                     }
-                    .font(.subheadline)
                     .foregroundColor(.blue)
-                    .padding(.trailing)
                 }
 
                 Button("Login") {
-                    // Action for login
-                    print("Email: \(email)")
-                    print("Password: \(password)")
-                    print("Remember Me: \(rememberMe)")
-                    // Simulate a successful login and navigate
-                    navigateToMainView = true
+                    loginTapped()
                 }
-                .buttonStyle(PrimaryButtonStyle())
-                .padding(.top)
-
-                HStack {
-                    Text("Don't have an account?")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Button("Sign Up") {
-                        // Action for sign up
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .cornerRadius(8)
+                
+                Button("Forgot Password?") {
+                    // Action for forgot password
                 }
-                .padding(.top, 20)
+                .foregroundColor(.blue)
 
                 Spacer()
+
+                NavigationLink(destination: MainView(), isActive: $navigateToMainView) {
+                    EmptyView()
+                }
             }
             .padding()
             .navigationBarHidden(true)
-            .background(Color.white.ignoresSafeArea())
-            .overlay(alignment: .bottom) {
-                VStack {
-                    Text("Or login with")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .padding(.bottom, 5)
-                    HStack(spacing: 30) {
-                        Button { /* Social Login Action */ } label: {
-                            Image(systemName: "applelogo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                        }
-                        Button { /* Social Login Action */ } label: {
-                            Image(systemName: "g.circle.fill") // Google logo
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                        }
-                        Button { /* Social Login Action */ } label: {
-                            Image(systemName: "f.circle.fill") // Facebook logo
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                        }
-                    }
-                }
-                .padding(.bottom, 30)
-            }
-            .navigationDestination(isPresented: $navigateToMainView) {
-                // Assuming MainView exists and is the next destination
-                MainView()
-            }
+            .alert(isPresented: $showAlert, content: {
+                Alert(title: Text("Login Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            })
         }
     }
-}
 
-// Custom Button Style for the Login Button
-struct PrimaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .foregroundColor(.white)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.blue)
-            .cornerRadius(10)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+    private func loginTapped() {
+        // Basic validation (can be expanded)
+        if email.isEmpty || password.isEmpty {
+            alertMessage = "Please enter both email and password."
+            showAlert = true
+            return
+        }
+
+        // Simulate login attempt
+        // In a real app, this would involve API calls
+        if isValidEmail(email) {
+            // Simulate successful login
+            navigateToMainView = true
+        } else {
+            alertMessage = "Invalid email format."
+            showAlert = true
+        }
+    }
+    
+    // Basic email validation function
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
+        return emailPredicate.evaluate(with: email)
     }
 }
 

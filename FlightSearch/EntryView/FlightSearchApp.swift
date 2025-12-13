@@ -1,18 +1,24 @@
-//
-//  FlightSearchApp.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 31/10/2023.
-//
-
 import SwiftUI
-import ServiceHandler
 
 @main
 struct FlightSearchApp: App {
+    @State private var navigationPath = NavigationPath()
+
     var body: some Scene {
         WindowGroup {
-            GuestView()
+            NavigationView {
+                LoginView()
+                    .environment("navigationPath", $navigationPath)
+                    .navigationDestination(for: String.self) { route in
+                        switch route {
+                        case "FlightSearch":
+                            FlightSearchView()
+                                .environment("navigationPath", $navigationPath)
+                        default:
+                            Text("Unknown route: \(route)")
+                        }
+                    }
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 # Use 'gemini-1.5-pro' for complex logic or 'gemini-1.5-flash' for speed
 model = genai.GenerativeModel(
-    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite',
     generation_config={"response_mime_type": "application/json"}
 )
 

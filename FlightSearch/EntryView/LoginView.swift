@@ -1,114 +1,121 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
-    @State private var isPasswordSecure = true
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    @State private var isLoginSuccessful = false
+    @State private var rememberMe = false
+    @State private var navigateToMainView = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Image(systemName: "lock.shield.fill")
+                Image("AppIcon") // Assuming you have an app icon named "AppIcon"
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .foregroundColor(.blue)
+                    .frame(width: 100, height: 100)
+                    .padding(.bottom, 40)
 
-                Text("Welcome Back!")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-
-                TextField("Username", text: $username)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                TextField("Email", text: $email)
+                    .keyboardType(.emailAddress)
                     .autocapitalization(.none)
+                    .modifier(BorderedView())
+
+                SecureField("Password", text: $password)
+                    .modifier(BorderedView())
 
                 HStack {
-                    if isPasswordSecure {
-                        SecureField("Password", text: $password)
-                    } else {
-                        TextField("Password", text: $password)
-                    }
-                }
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        isPasswordSecure.toggle()
-                    }) {
-                        Image(systemName: isPasswordSecure ? "eye.slash.fill" : "eye.fill")
+                    Toggle(isOn: $rememberMe) {
+                        Text("Remember Me")
+                            .font(.subheadline)
                             .foregroundColor(.gray)
                     }
-                }
-
-                Button(action: performLogin) {
-                    Text("Login")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                }
-                .disabled(username.isEmpty || password.isEmpty)
-
-                Text("Or login with:")
-                    .foregroundColor(.gray)
-
-                HStack(spacing: 30) {
-                    Button(action: {}) {
-                        Image("google_logo") // Assume you have a Google logo image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
+                    .padding(.leading)
+                    Spacer()
+                    Button("Forgot Password?") {
+                        // Action for forgot password
                     }
-
-                    Button(action: {}) {
-                        Image("apple_logo") // Assume you have an Apple logo image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                    }
+                    .font(.subheadline)
+                    .foregroundColor(.blue)
+                    .padding(.trailing)
                 }
 
-                Spacer()
+                Button("Login") {
+                    // Action for login
+                    print("Email: \(email)")
+                    print("Password: \(password)")
+                    print("Remember Me: \(rememberMe)")
+                    // Simulate a successful login and navigate
+                    navigateToMainView = true
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .padding(.top)
 
                 HStack {
                     Text("Don't have an account?")
-                    NavigationLink("Sign Up", destination: Text("Sign Up Screen Placeholder"))
-                        .foregroundColor(.blue)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    Button("Sign Up") {
+                        // Action for sign up
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.blue)
                 }
+                .padding(.top, 20)
+
+                Spacer()
             }
             .padding()
-            .navigationTitle("Login")
-            .alert(isPresented: $showAlert, content: { 
-                Alert(title: Text("Login Status"), message: Text(alertMessage), dismissButton: .default(Text("OK"))) 
-            })
-            .background(
-                NavigationLink(
-                    destination: Text("Main App Screen"), // Placeholder for the next screen
-                    isActive: $isLoginSuccessful,
-                    label: { EmptyView() })
-            )
+            .navigationBarHidden(true)
+            .background(Color.white.ignoresSafeArea())
+            .overlay(alignment: .bottom) {
+                VStack {
+                    Text("Or login with")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 5)
+                    HStack(spacing: 30) {
+                        Button { /* Social Login Action */ } label: {
+                            Image(systemName: "applelogo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                        }
+                        Button { /* Social Login Action */ } label: {
+                            Image(systemName: "g.circle.fill") // Google logo
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                        }
+                        Button { /* Social Login Action */ } label: {
+                            Image(systemName: "f.circle.fill") // Facebook logo
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                        }
+                    }
+                }
+                .padding(.bottom, 30)
+            }
+            .navigationDestination(isPresented: $navigateToMainView) {
+                // Assuming MainView exists and is the next destination
+                MainView()
+            }
         }
     }
+}
 
-    func performLogin() {
-        // Dummy login logic
-        if username == "testuser" && password == "password123" {
-            alertMessage = "Login Successful!"
-            isLoginSuccessful = true
-        } else {
-            alertMessage = "Invalid username or password. Please try again."
-            showAlert = true
-        }
+// Custom Button Style for the Login Button
+struct PrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundColor(.white)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .cornerRadius(10)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }
 

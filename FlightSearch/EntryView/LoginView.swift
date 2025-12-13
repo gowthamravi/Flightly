@@ -1,69 +1,113 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
-    @State private var isLoginMode = false
+    @State private var isPasswordSecure = true
+    @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var showingAlert = false
+    @State private var isLoginSuccessful = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Image("component") // Assuming 'component' is a logo or relevant image
+                Image(systemName: "lock.shield.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .padding(.bottom, 40)
+                    .frame(width: 80, height: 80)
+                    .foregroundColor(.blue)
 
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
+                Text("Welcome Back!")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                TextField("Username", text: $username)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
                     .autocapitalization(.none)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
 
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                Button {
-                    // TODO: Implement login/signup logic
-                    if email.isEmpty || password.isEmpty {
-                        alertMessage = "Please enter both email and password."
-                        showingAlert = true
+                HStack {
+                    if isPasswordSecure {
+                        SecureField("Password", text: $password)
                     } else {
-                        // Placeholder for actual authentication logic
-                        alertMessage = isLoginMode ? "Login successful!" : "Sign up successful!"
-                        showingAlert = true
+                        TextField("Password", text: $password)
                     }
-                } label: {
-                    Text(isLoginMode ? "Log In" : "Sign Up")
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isPasswordSecure.toggle()
+                    }) {
+                        Image(systemName: isPasswordSecure ? "eye.slash.fill" : "eye.fill")
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                Button(action: performLogin) {
+                    Text("Login")
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Image("button").resizable().scaledToFill())
-                        .cornerRadius(8)
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
-                .padding(.top)
+                .disabled(username.isEmpty || password.isEmpty)
 
-                Button {
-                    isLoginMode.toggle()
-                } label: {
-                    Text(isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Log In")
-                        .foregroundColor(.blue)
+                Text("Or login with:")
+                    .foregroundColor(.gray)
+
+                HStack(spacing: 30) {
+                    Button(action: {}) {
+                        Image("google_logo") // Assume you have a Google logo image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                    }
+
+                    Button(action: {}) {
+                        Image("apple_logo") // Assume you have an Apple logo image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                    }
                 }
-                .padding(.top, 10)
 
                 Spacer()
+
+                HStack {
+                    Text("Don't have an account?")
+                    NavigationLink("Sign Up", destination: Text("Sign Up Screen Placeholder"))
+                        .foregroundColor(.blue)
+                }
             }
             .padding()
-            .navigationTitle("Welcome")
-            .alert(isPresented: $showingAlert) {
-                Alert(title: Text("Status"), message: Text(alertMessage), dismissButton: .default(Text("OK"))) //.
-            }
+            .navigationTitle("Login")
+            .alert(isPresented: $showAlert, content: { 
+                Alert(title: Text("Login Status"), message: Text(alertMessage), dismissButton: .default(Text("OK"))) 
+            })
+            .background(
+                NavigationLink(
+                    destination: Text("Main App Screen"), // Placeholder for the next screen
+                    isActive: $isLoginSuccessful,
+                    label: { EmptyView() })
+            )
+        }
+    }
+
+    func performLogin() {
+        // Dummy login logic
+        if username == "testuser" && password == "password123" {
+            alertMessage = "Login Successful!"
+            isLoginSuccessful = true
+        } else {
+            alertMessage = "Invalid username or password. Please try again."
+            showAlert = true
         }
     }
 }

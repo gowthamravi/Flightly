@@ -6,14 +6,12 @@ struct FlightSearchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            NavigationStack(path: $navigationPath) {
                 LoginView()
-                    .environment("navigationPath", $navigationPath)
                     .navigationDestination(for: String.self) { route in
                         switch route {
                         case "FlightSearch":
                             FlightSearchView()
-                                .environment("navigationPath", $navigationPath)
                         default:
                             Text("Unknown route: \(route)")
                         }

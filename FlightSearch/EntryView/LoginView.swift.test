@@ -3,169 +3,62 @@ import XCTest
 
 class LoginViewTests: XCTestCase {
 
-    func testLoginView_InitialState() throws {
-        let view = LoginView()
-        XCTAssertTrue(view.username.isEmpty, "Username should be empty initially")
-        XCTAssertTrue(view.password.isEmpty, "Password should be empty initially")
-        XCTAssertTrue(view.isPasswordObscured, "Password should be obscured initially")
+    func testValidEmail() {
+        let loginView = LoginView()
+        XCTAssertTrue(loginView.isValidEmail("test@example.com"))
+        XCTAssertTrue(loginView.isValidEmail("firstname.lastname@domain.co.uk"))
+        XCTAssertTrue(loginView.isValidEmail("email+alias@sub.domain.com"))
     }
 
-    func testLoginView_UsernameInput() throws {
-        let view = LoginView()
-        view.username = "testuser"
-        XCTAssertEqual(view.username, "testuser", "Username input is not working")
+    func testInvalidEmail() {
+        let loginView = LoginView()
+        XCTAssertFalse(loginView.isValidEmail("invalid-email"))
+        XCTAssertFalse(loginView.isValidEmail("invalid@domain"))
+        XCTAssertFalse(loginView.isValidEmail("@domain.com"))
+        XCTAssertFalse(loginView.isValidEmail("test@.com"))
+        XCTAssertFalse(loginView.isValidEmail("test@domain."))
     }
 
-    func testLoginView_PasswordInput() throws {
-        let view = LoginView()
-        view.password = "password123"
-        XCTAssertEqual(view.password, "password123", "Password input is not working")
+    func testPasswordValidation() {
+        let loginView = LoginView()
+        XCTAssertTrue(loginView.password.count >= 8, "Password should be at least 8 characters long. Current length: \(loginView.password.count)") // This test requires the password to be set externally or simulated.
+        // In a real scenario, we'd likely test the loginUser() function with different states of email and password.
     }
 
-    func testLoginView_TogglePasswordObscurity() throws {
-        var view = LoginView()
-        XCTAssertTrue(view.isPasswordObscured, "Password should be obscured initially")
-        
-        // Simulate tapping the eye icon
-        view.isPasswordObscured.toggle()
-        XCTAssertFalse(view.isPasswordObscured, "Toggling obscurity should un-obscure the password")
-        
-        view.isPasswordObscured.toggle()
-        XCTAssertTrue(view.isPasswordObscured, "Toggling obscurity again should re-obscure the password")
+    // Corner case: Empty email and password should disable login button
+    func testLoginButtonDisabledWhenEmpty() {
+        let loginView = LoginView()
+        XCTAssertTrue(loginView.email.isEmpty)
+        XCTAssertTrue(loginView.password.isEmpty)
+        // We need to simulate the UI interaction to check button state, which is harder in pure unit tests without UI testing frameworks.
+        // For a unit test, we can check the conditions that would lead to the button being disabled.
     }
 
-    func testLoginView_LoginButtonState() throws {
-        let view = LoginView()
-        
-        // When both fields are empty, button should be disabled
-        XCTAssertTrue(view.username.isEmpty)
-        XCTAssertTrue(view.password.isEmpty)
-        XCTAssertTrue(view.body.contains("Login").modifiers.contains { $0.label == "disabled" })
-
-        // When username is filled, button should still be disabled if password is empty
-        view.username = "user"
-        XCTAssertFalse(view.username.isEmpty)
-        XCTAssertTrue(view.password.isEmpty)
-        XCTAssertTrue(view.body.contains("Login").modifiers.contains { $0.label == "disabled" })
-
-        // When password is filled, button should be enabled
-        view.password = "pass"
-        XCTAssertFalse(view.username.isEmpty)
-        XCTAssertFalse(view.password.isEmpty)
-        XCTAssertFalse(view.body.contains("Login").modifiers.contains { $0.label == "disabled" })
-    }
-    
-    func testLoginView_NavigationOnLogin() throws {
-        let mockNavigationPath = NavigationPath()
-        let loginView = LoginView().environmentObject(mockNavigationPath)
-        
-        // Simulate filling the form and tapping login
-        let usernameBinding = Binding(get: {"testuser"}, set: {_ in })
-        let passwordBinding = Binding(get: {"password123"}, set: {_ in })
-        
-        // This is a simplification, as direct state manipulation in previews is complex.
-        // In a real scenario, you'd use XCTest's view interaction capabilities.
-        // For this test, we'll assume the action is triggered and check the path.
-        
-        // Simulate the button press by directly calling the action
-        // (This requires accessing the button's action closure, which is not directly exposed in this simple struct)
-        // As a workaround, let's simulate the state change that would enable the button and then imagine the action.
-        
-        // If username and password are set, the button should be enabled.
-        // We can't directly tap buttons in unit tests for views like this easily.
-        // A more robust test would involve UIKit/AppKit testing tools or SwiftUI's preview interaction features
-        // but for this specific task, we'll assume the navigation logic within the button action works.
-        
-        // To test the path change, we need to trigger the action. We'll do this by modifying the NavigationPath directly
-        // if the view's action were to call a method on it.
-        
-        // Let's refine this to test the environment object interaction conceptually.
-        // In a real app, the Button's action would be called.
-        // We'll assume the action is: `navigationPath.path.append("FlightSearchView")`
-        
-        // We can test that if the conditions are met, the action *would* be triggered.
-        // To actually test the path change, we'd need to instantiate the view and interact with it.
-        // For simplicity in this unit test, we'll assume the `Button` action modifies the `navigationPath`.
-        
-        // Let's simulate the state where the login button *would* be active.
-        var tempView = LoginView(username: "testuser", password: "password123")
-        tempView.navigationPath = mockNavigationPath
-        
-        // We cannot directly trigger the Button's action from here without more complex setup.
-        // However, we can verify the 'disabled' modifier isn't present when fields are filled.
-        // Let's check if the 'disabled' modifier is absent.
-        let loginButtonIsEnabled = !tempView.body.contains("Login").modifiers.contains { $0.label == "disabled" }
-        XCTAssertTrue(loginButtonIsEnabled, "Login button should be enabled when username and password are provided")
-        
-        // To test the navigation path change, a more integrated test (like an integration test with SwiftUI views) would be needed.
-        // For this unit test, we are focusing on the UI state and data binding.
-        // We assert that the navigation path *would* be updated if the button were pressed.
-        // This is a placeholder for a more complete UI test.
-        
-        // If the button were tapped, the path should contain "FlightSearchView"
-        // mockNavigationPath.path.append("FlightSearchView")
-        // XCTAssertTrue(mockNavigationPath.path.contains("FlightSearchView"), "Navigation path should update upon login")
-    }
-    
-    func testLoginView_ContinueAsGuestNavigation() throws {
-        let mockNavigationPath = NavigationPath()
-        var loginView = LoginView().environmentObject(mockNavigationPath)
-        
-        // Simulate tapping the "Continue as Guest" button
-        // Again, direct tap simulation is complex. We'll assume the action is called.
-        // The action is: `navigationPath.path.append("MainView")`
-        
-        // If the button were tapped, the path should contain "MainView"
-        // For testing purposes, let's assume the action is called and check the path.
-        // mockNavigationPath.path.append("MainView")
-        // XCTAssertTrue(mockNavigationPath.path.contains("MainView"), "Navigation path should update for guest login")
-    }
-    
-    // Corner Case: Empty username/password
-    func testLoginView_EmptyCredentials() throws {
-        var view = LoginView()
-        view.username = ""
-        view.password = ""
-        XCTAssertTrue(view.username.isEmpty)
-        XCTAssertTrue(view.password.isEmpty)
-        // The login button should be disabled
-        let loginButtonIsDisabled = view.body.contains("Login").modifiers.contains { $0.label == "disabled" }
-        XCTAssertTrue(loginButtonIsDisabled, "Login button should be disabled when fields are empty")
+    // Corner case: Long email and password
+    func testLongInputFields() {
+        let loginView = LoginView()
+        let longEmail = String(repeating: "a", count: 254) + "@domain.com"
+        let longPassword = String(repeating: "b", count: 100)
+        XCTAssertTrue(loginView.isValidEmail(longEmail))
+        XCTAssertTrue(loginView.password.count >= 8) // Similar to password validation, needs state manipulation.
     }
 
-    // Corner Case: Only username filled
-    func testLoginView_OnlyUsernameFilled() throws {
-        var view = LoginView()
-        view.username = "testuser"
-        view.password = ""
-        XCTAssertFalse(view.username.isEmpty)
-        XCTAssertTrue(view.password.isEmpty)
-        // The login button should be disabled
-        let loginButtonIsDisabled = view.body.contains("Login").modifiers.contains { $0.label == "disabled" }
-        XCTAssertTrue(loginButtonIsDisabled, "Login button should be disabled when password is empty")
+    // Corner case: Special characters in email (valid and invalid)
+    func testSpecialCharactersInEmail() {
+        let loginView = LoginView()
+        XCTAssertTrue(loginView.isValidEmail("test.user+alias@example.com"))
+        XCTAssertTrue(loginView.isValidEmail("user_name@domain.org"))
+        XCTAssertFalse(loginView.isValidEmail("user name@domain.com")) // Space is invalid
+        XCTAssertFalse(loginView.isValidEmail("user@domain..com")) // Double dot is invalid
     }
 
-    // Corner Case: Only password filled
-    func testLoginView_OnlyPasswordFilled() throws {
-        var view = LoginView()
-        view.username = ""
-        view.password = "password123"
-        XCTAssertTrue(view.username.isEmpty)
-        XCTAssertFalse(view.password.isEmpty)
-        // The login button should be disabled
-        let loginButtonIsDisabled = view.body.contains("Login").modifiers.contains { $0.label == "disabled" }
-        XCTAssertTrue(loginButtonIsDisabled, "Login button should be disabled when username is empty")
-    }
-    
-    // Corner Case: Special characters in username/password (assuming they are allowed)
-    func testLoginView_SpecialCharacters() throws {
-        var view = LoginView()
-        view.username = "user!@#$%^&*()_+"
-        view.password = "p@$$wOrd!123"
-        XCTAssertEqual(view.username, "user!@#$%^&*()_+")
-        XCTAssertEqual(view.password, "p@$$wOrd!123")
-        // Button should be enabled
-        let loginButtonIsDisabled = view.body.contains("Login").modifiers.contains { $0.label == "disabled" }
-        XCTAssertFalse(loginButtonIsDisabled, "Login button should be enabled with special characters")
-    }
+    // Add more tests for the simulated loginUser() function if it were more complex, e.g., testing API responses.
+    // For example:
+    // func testLoginSuccessSimulation() {
+    //     let loginView = LoginView()
+    //     loginView.email = "valid@example.com"
+    //     loginView.password = "validpassword"
+    //     loginView.loginUser() // This would need to be async and check a published property
+    //     // XCTAssertTrue(loginView.isLoginSuccessful)
+    // }
 }

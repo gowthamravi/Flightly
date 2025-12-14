@@ -1,98 +1,122 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
-    @State private var isPasswordObscured = true
-    @EnvironmentObject var navigationPath: NavigationPath
+    @State private var showError = false
+    @State private var errorMessage = ""
+    @State private var isLoginSuccessful = false
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Spacer()
-
-                Image(systemName: "airplane.departure.curve")
+                Image("AppLogo") // Assuming you have an app logo image
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(.blue)
+                    .frame(width: 150, height: 150)
+                    .padding(.bottom, 40)
 
-                Text("Welcome Back!")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                TextField("Email Address", text: $email)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
 
-                TextField("Username", text: $username)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
+                SecureField("Password", text: $password)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                Button("Login") {
+                    loginUser()
+                }
+                .buttonStyle(PrimaryButtonStyle()) // Assuming a custom button style
+                .disabled(email.isEmpty || password.isEmpty)
 
                 HStack {
-                    if isPasswordObscured {
-                        SecureField("Password", text: $password)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                            .padding(.leading)
-                    } else {
-                        TextField("Password", text: $password)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                            .padding(.leading)
-                    }
-
-                    Button(action: {
-                        isPasswordObscured.toggle()
-                    }) {
-                        Image(systemName: isPasswordObscured ? "eye.slash" : "eye")
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.trailing)
+                    Text("Forgot Password?")
+                        .foregroundColor(.blue)
+                    Spacer()
+                    Text("Sign Up")
+                        .foregroundColor(.blue)
                 }
-
-                Button(action: {
-                    // TODO: Implement actual login logic
-                    print("Username: \(username)")
-                    print("Password: \(password)")
-                    // For now, navigate to the main search view
-                    navigationPath.path.append("FlightSearchView")
-                }) {
-                    Text("Login")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal)
-                .disabled(username.isEmpty || password.isEmpty)
-
-                HStack {
-                    Text("Don't have an account?")
-                    Button("Sign Up") {
-                        // TODO: Implement Sign Up navigation
-                    }
-                }
-                .foregroundColor(.blue)
+                .padding(.top, 10)
 
                 Spacer()
 
-                Button("Continue as Guest") {
-                    // TODO: Implement Continue as Guest navigation
-                    navigationPath.path.append("MainView")
+                Text("Or continue with:")
+                    .foregroundColor(.gray)
+
+                HStack {
+                    Image(systemName: "globe") // Placeholder for Google
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .onTapGesture {
+                            // Handle Google sign-in
+                        }
+
+                    Image(systemName: "applelogo") // Placeholder for Apple
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
+                        .onTapGesture {
+                            // Handle Apple sign-in
+                        }
                 }
-                .padding(.bottom)
-                .foregroundColor(.blue)
+                .padding(.top, 20)
             }
-            .navigationBarTitle("Flight Finder", displayMode: .inline)
+            .padding()
+            .navigationTitle("Welcome")
+            .navigationBarHidden(true) // Hides the default navigation bar for a cleaner look
+            .alert(isPresented: $showError) {
+                Alert(title: Text("Login Failed"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+            }
+            .fullScreenCover(isPresented: $isLoginSuccessful) {
+                // Navigate to the next view after successful login
+                // Replace FlightSearchView() with your actual next view
+                FlightSearchView()
+            }
         }
+    }
+
+    func loginUser() {
+        // Basic validation - in a real app, this would involve API calls
+        if isValidEmail(email) && password.count >= 8 {
+            // Simulate a successful login
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // Simulate network delay
+                isLoginSuccessful = true
+            }
+        } else {
+            if !isValidEmail(email) {
+                errorMessage = "Please enter a valid email address."
+            } else if password.count < 8 {
+                errorMessage = "Password must be at least 8 characters long."
+            }
+            showError = true
+        }
+    }
+
+    func isValidEmail(_ email: String) -> Bool {
+        // Simple email validation regex
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
+    }
+}
+
+// Custom Button Style (Example)
+struct PrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView().environmentObject(NavigationPath())
+        LoginView()
     }
 }

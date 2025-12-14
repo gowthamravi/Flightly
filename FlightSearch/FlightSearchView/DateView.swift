@@ -16,7 +16,7 @@ struct DateView: View {
             isPresented.toggle()
         } label: {
             Text("Depature Date: \(flight.fromDate.toString)")
-                .customBoarderStyle()
+//                .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
             SelectDateView(selectedDate: $flight.fromDate, isPresented: $isPresented)

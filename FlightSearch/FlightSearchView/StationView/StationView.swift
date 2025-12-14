@@ -23,7 +23,6 @@ struct StationView: View {
             Text(stationType == .origin ?
                  "From: \(flight.origin?.code ?? "")" :
                   "To: \(flight.destination?.code ?? "")")
-            .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
             StationListView(isPresented: $isPresented, stationType: stationType)

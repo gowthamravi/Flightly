@@ -31,7 +31,6 @@ struct LetsGoView: View {
                 }
             } label: {
                 Text("Let's go")
-                    .customBoarderStyle()
             }
             .sheet(isPresented: $isPresented) {
                 FlightsListView(flights: flight.flights, isPresented: $isPresented)

@@ -20,7 +20,6 @@ struct NoFlightView: View {
                 isPresented.toggle()
             } label: {
                 Text("Go back")
-                    .customBoarderStyle()
             }
         })
         .navigationBarBackButtonHidden(true)

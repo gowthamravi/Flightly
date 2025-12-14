@@ -20,7 +20,6 @@ struct ContentUnAvailableCustomView: View {
                 isPresented.toggle()
             } label: {
                 Text("Go back")
-                    .customBoarderStyle()
             }
         })
         .navigationBarBackButtonHidden(true)

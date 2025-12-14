@@ -16,7 +16,6 @@ struct PassengerView: View {
             isPresented.toggle()
         } label: {
             Text("Passengers: \(passengerText())")
-                .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
             Passengers(isPresented: $isPresented, passengerList: $flight.passengersList)

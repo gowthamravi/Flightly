@@ -1,76 +1,70 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
-    @EnvironmentObject var navigationPath: NavigationPath
+    @State private var isPasswordVisible = false
+    @State private var navigateToMain = false
 
     var body: some View {
-        VStack {
-            Image("AppLogo") // Assuming you have an app logo image named "AppLogo"
-                .resizable()
-                .scaledToFit()
-                .frame(height: 150)
-                .padding(.bottom, 50)
+        NavigationView {
+            VStack {
+                Image(systemName: "airplane.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(.blue)
+                    .padding(.bottom, 50)
 
-            TextField("Email Address", text: $email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-                .autocapitalization(.none)
+                TextField("Username", text: $username)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
+                    .disableAutocorrection(true)
 
-            SecureField("Password", text: $password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-
-            Button("Login") {
-                // TODO: Implement actual login logic
-                print("Login tapped with email: \(email) and password: \(password)")
-                // For now, just navigate to ContentView
-                navigationPath.path.append(NavigationDestination.mainView)
-            }
-            .padding()
-            .buttonStyle(PrimaryButtonStyle())
-
-            Button("Forgot Password?") {
-                // TODO: Implement forgot password flow
-                print("Forgot Password tapped")
-            }
-            .padding(.top, 10)
-            .foregroundColor(.blue)
-
-            Spacer()
-
-            HStack {
-                Text("Don't have an account?")
-                Button("Sign Up") {
-                    // TODO: Implement sign up flow
-                    print("Sign Up tapped")
+                HStack {
+                    if isPasswordVisible {
+                        TextField("Password", text: $password)
+                    } else {
+                        SecureField("Password", text: $password)
+                    }
+                    Button(action: {
+                        isPasswordVisible.toggle()
+                    }) {
+                        Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
+                            .foregroundColor(.gray)
+                    }
                 }
-                .foregroundColor(.blue)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
+
+                Button("Login") {
+                    // TODO: Implement actual login logic
+                    if isValidLogin() {
+                        navigateToMain = true
+                    }
+                }
+                .padding()
+                .buttonStyle(.borderedProminent)
+                .disabled(username.isEmpty || password.isEmpty)
+
+                Spacer()
+
+                NavigationLink(destination: ContentView(), isActive: $navigateToMain) {
+                    EmptyView()
+                }
             }
-            .padding(.bottom)
+            .navigationTitle("Flight Search")
         }
-        .navigationBarHidden(true) // Hide the navigation bar
+    }
+
+    func isValidLogin() -> Bool {
+        // Basic validation for demonstration purposes
+        return username == "user" && password == "password"
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
-            .environmentObject(NavigationPath())
-    }
-}
-
-// Custom Button Style for Login Button
-struct PrimaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0) // Animate press
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }

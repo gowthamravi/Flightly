@@ -17,9 +17,9 @@ JIRA_TOKEN = os.getenv("JIRA_API_TOKEN")
 
 # OpenAI Proxy Config (Azure Client)
 AI_PROXY_KEY = os.getenv("AI_PROXY_KEY")
-AI_MODEL_DEPLOYMENT = os.getenv("AI_MODEL_DEPLOYMENT", "gpt-4o")
+AI_MODEL_DEPLOYMENT = os.getenv("AI_MODEL_DEPLOYMENT", "gemini-2.5-pro")
 AI_PROXY_URL = os.getenv("AI_PROXY_URL", "https://ai-proxy.lab.epam.com")
-AI_API_VERSION = os.getenv("AI_API_VERSION", "2024-02-01")
+AI_API_VERSION = os.getenv("AI_API_VERSION", "")
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_PATH = "./"

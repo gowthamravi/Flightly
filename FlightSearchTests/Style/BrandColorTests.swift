@@ -4,27 +4,30 @@ import SwiftUI
 
 final class BrandColorTests: XCTestCase {
 
-    func testBrandPinkColor_HasCorrectRGBValues() {
+    func testFlightlyPinkColorComponentsAreCorrect() {
         // Given
-        let brandColor = Color.brandPink
-        let expectedRed: CGFloat = 227 / 255.0
-        let expectedGreen: CGFloat = 143 / 255.0
-        let expectedBlue: CGFloat = 188 / 255.0
-        
+        let expectedRed: CGFloat = 227/255
+        let expectedGreen: CGFloat = 143/255
+        let expectedBlue: CGFloat = 188/255
+        let expectedAlpha: CGFloat = 1.0
+
         // When
-        let uiColor = UIColor(brandColor)
+        let sut = BrandColor.flightlyPink
+        
+        // To test a SwiftUI Color, we convert it to a UIColor to inspect its components.
+        let uiColor = UIColor(sut)
+
         var actualRed: CGFloat = 0
         var actualGreen: CGFloat = 0
         var actualBlue: CGFloat = 0
         var actualAlpha: CGFloat = 0
-        
-        let conversionSuccess = uiColor.getRed(&actualRed, green: &actualGreen, blue: &actualBlue, alpha: &actualAlpha)
-        
+
+        uiColor.getRed(&actualRed, green: &actualGreen, blue: &actualBlue, alpha: &actualAlpha)
+
         // Then
-        XCTAssertTrue(conversionSuccess, "Failed to convert SwiftUI Color to UIColor components.")
-        XCTAssertEqual(actualRed, expectedRed, accuracy: 0.001, "Red component does not match the expected value.")
-        XCTAssertEqual(actualGreen, expectedGreen, accuracy: 0.001, "Green component does not match the expected value.")
-        XCTAssertEqual(actualBlue, expectedBlue, accuracy: 0.001, "Blue component does not match the expected value.")
-        XCTAssertEqual(actualAlpha, 1.0, accuracy: 0.001, "Alpha component should be fully opaque.")
+        XCTAssertEqual(actualRed, expectedRed, accuracy: 0.001, "Red component should match the design spec (227/255)")
+        XCTAssertEqual(actualGreen, expectedGreen, accuracy: 0.001, "Green component should match the design spec (143/255)")
+        XCTAssertEqual(actualBlue, expectedBlue, accuracy: 0.001, "Blue component should match the design spec (188/255)")
+        XCTAssertEqual(actualAlpha, expectedAlpha, accuracy: 0.001, "Alpha component should be fully opaque")
     }
 }

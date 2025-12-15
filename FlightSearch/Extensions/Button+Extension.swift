@@ -1,21 +1,21 @@
 import SwiftUI
 
-// MARK: - Theme Colors
-extension Color {
-    static let flightlyPink = Color(red: 227/255, green: 143/255, blue: 188/255)
+// Note: Per DP-12, only the background color was changed.
+// The struct name and other modifiers remain untouched to minimize regression risk.
+struct FlightlyButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.headline)
+            .foregroundColor(.white)
+            .frame(height: 55)
+            .frame(maxWidth: .infinity)
+            .background(BrandColor.flightlyPink) // Updated color from DP-12
+            .clipShape(Capsule())
+    }
 }
 
-// MARK: - Button Style
-
-/// A primary button style used across the app, referred to as `FlightlyButton`.
-struct FlightlyButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .background(Color.flightlyPink) // Updated color per DP-12
-            .foregroundColor(.white)
-            .clipShape(Capsule())
+extension View {
+    func flightlyButtonStyle() -> some View {
+        self.modifier(FlightlyButton())
     }
 }

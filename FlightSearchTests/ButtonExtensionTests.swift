@@ -4,28 +4,34 @@ import SwiftUI
 
 final class ButtonExtensionTests: XCTestCase {
 
-    func testFlightlyButtonStyle() {
-        // Create a button with the flightlyButtonStyle applied
-        let button = Button("Test Button") {}
-            .flightlyButtonStyle()
+    func testFlightlyButtonBackgroundColor() {
+        let button = FlightlyButton(title: "Test Button")
+        let hostingController = UIHostingController(rootView: button)
 
-        // Extract the background color from the button
-        let backgroundColor = button.backgroundColor
+        XCTAssertNotNil(hostingController.view)
 
-        // Assert the background color matches the expected color
-        XCTAssertEqual(backgroundColor, Color(red: 227 / 255, green: 143 / 255, blue: 188 / 255))
-    }
-}
+        let buttonView = hostingController.view.subviews.first(where: { $0 is UIButton })
+        XCTAssertNotNil(buttonView)
 
-// Helper extension to extract background color for testing
-extension View {
-    var backgroundColor: Color? {
-        let mirror = Mirror(reflecting: self)
-        for child in mirror.children {
-            if let color = child.value as? Color {
-                return color
-            }
+        if let buttonView = buttonView as? UIButton {
+            let backgroundColor = buttonView.backgroundColor
+            let expectedColor = UIColor(red: 227/255, green: 143/255, blue: 188/255, alpha: 1)
+            XCTAssertEqual(backgroundColor, expectedColor, "Button background color does not match the expected pink color.")
         }
-        return nil
+    }
+
+    func testFlightlyButtonTextColor() {
+        let button = FlightlyButton(title: "Test Button")
+        let hostingController = UIHostingController(rootView: button)
+
+        XCTAssertNotNil(hostingController.view)
+
+        let buttonView = hostingController.view.subviews.first(where: { $0 is UIButton })
+        XCTAssertNotNil(buttonView)
+
+        if let buttonView = buttonView as? UIButton {
+            let textColor = buttonView.titleColor(for: .normal)
+            XCTAssertEqual(textColor, UIColor.white, "Button text color is not white.")
+        }
     }
 }

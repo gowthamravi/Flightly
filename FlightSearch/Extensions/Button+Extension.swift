@@ -1,15 +1,16 @@
 import SwiftUI
 
-struct FlightlyButton: View {
-    var title: String
+struct FlightlyButton: ButtonStyle {
+    // The background color is now a testable property.
+    let backgroundColor = Color(red: 227/255, green: 143/255, blue: 188/255)
 
-    var body: some View {
-        Text(title)
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
             .font(.headline)
-            .foregroundColor(.white)
-            .padding()
+            .frame(height: 55)
             .frame(maxWidth: .infinity)
-            .background(Color(red: 227/255, green: 143/255, blue: 188/255))
+            .foregroundColor(.white)
+            .background(backgroundColor)
             .clipShape(Capsule())
     }
 }

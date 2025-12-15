@@ -3,7 +3,7 @@ import json
 import argparse
 import openai
 from jira import JIRA
-from github import Github
+from github import Github, Auth
 from git import Repo
 from dotenv import load_dotenv
 
@@ -35,7 +35,7 @@ client = openai.AzureOpenAI(
 
 # 2. Jira & GitHub
 jira = JIRA(server=JIRA_SERVER, basic_auth=(JIRA_USER, JIRA_TOKEN))
-g = Github(GITHUB_TOKEN)
+g = Github(auth=Auth.Token(GITHUB_TOKEN))
 
 def get_file_structure(path):
     """

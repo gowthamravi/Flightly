@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import json
 import argparse
@@ -6,6 +7,9 @@ from jira import JIRA
 from github import Github, Auth
 from git import Repo
 from dotenv import load_dotenv
+import threading
+import time
+import sys
 
 # Load environment variables from .env file
 load_dotenv()
@@ -51,6 +55,23 @@ def get_file_structure(path):
                 file_list.append(os.path.join(root, file))
     return "\n".join(file_list)
 
+def loading_animation(stop_event):
+    """
+    Prints dots while waiting for the AI response.
+    Cycles through ., .., ..., and clears.
+    """
+    chars = [".  ", ".. ", "..."]
+    idx = 0
+    while not stop_event.is_set():
+        sys.stdout.write("\r" + "🧠 AI is thinking" + chars[idx % len(chars)])
+        sys.stdout.flush()
+        idx += 1
+        time.sleep(0.5)
+    
+    # Clear the line when done
+    sys.stdout.write("\r" + " " * 30 + "\r")
+    sys.stdout.flush()
+
 def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     """
     The Brain: Sends context to OpenAI Proxy and asks for JSON output.
@@ -85,7 +106,13 @@ def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     }}
     """
 
-    print(f"🧠 AI ({AI_MODEL_DEPLOYMENT}) is thinking...")
+    # Print initial message without newline so animation can overwrite it
+    # We don't print here because the animation handles the "Thinking" text now
+    # print(f"🧠 AI ({AI_MODEL_DEPLOYMENT}) is thinking...", end="", flush=True)
+    
+    stop_event = threading.Event()
+    loader_thread = threading.Thread(target=loading_animation, args=(stop_event,))
+    loader_thread.start()
     
     try:
         response = client.chat.completions.create(
@@ -98,17 +125,27 @@ def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
             response_format={"type": "json_object"}
         )
         
+        stop_event.set()
+        loader_thread.join()
+        # No extra print needed as animation clears the line
+        
         content = response.choices[0].message.content
         return json.loads(content)
         
     except openai.APIError as e:
+        stop_event.set()
+        loader_thread.join()
         print(f"❌ OpenAI API Error: {e}")
         return None
     except json.JSONDecodeError as e:
+        stop_event.set()
+        loader_thread.join()
         print(f"❌ Error parsing JSON response: {e}")
         print(f"Raw content: {content}")
         return None
     except Exception as e:
+        stop_event.set()
+        loader_thread.join()
         print(f"❌ Unexpected Error: {e}")
         return None
 

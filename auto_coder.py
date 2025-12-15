@@ -1,41 +1,45 @@
 import os
 import json
 import argparse
-import google.generativeai as genai
+import openai
 from jira import JIRA
 from github import Github
 from git import Repo
-from dotenv import load_dotenv  # <--- Add this import
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 # --- CONFIGURATION ---
-# Now it reads safely from the file, not the code
 JIRA_SERVER = os.getenv("JIRA_SERVER")
 JIRA_USER = os.getenv("JIRA_USER")
 JIRA_TOKEN = os.getenv("JIRA_API_TOKEN")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# OpenAI Proxy Config (Azure Client)
+AI_PROXY_KEY = "dial-2oenr6l78upvu7eb9ykqwzp1vkh"
+AI_MODEL_DEPLOYMENT = os.getenv("AI_MODEL_DEPLOYMENT", "gpt-4o")
+AI_PROXY_URL = os.getenv("AI_PROXY_URL", "https://ai-proxy.lab.epam.com")
+AI_API_VERSION = os.getenv("AI_API_VERSION", "2024-02-01")
+
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_PATH = "./"
 
 # --- Initialize Clients ---
-# 1. Configure Gemini
-genai.configure(api_key=GOOGLE_API_KEY)
-
-# Use 'gemini-1.5-pro' for complex logic or 'gemini-1.5-flash' for speed
-model = genai.GenerativeModel(
-    'gemini-2.5-flash-lite',
-    generation_config={"response_mime_type": "application/json"}
+# 1. OpenAI (Azure)
+client = openai.AzureOpenAI(
+    azure_endpoint=AI_PROXY_URL,
+    api_key=AI_PROXY_KEY,
+    api_version=AI_API_VERSION,
+    azure_deployment=AI_MODEL_DEPLOYMENT
 )
 
-# 2. Configure Jira & GitHub
+# 2. Jira & GitHub
 jira = JIRA(server=JIRA_SERVER, basic_auth=(JIRA_USER, JIRA_TOKEN))
 g = Github(GITHUB_TOKEN)
 
 def get_file_structure(path):
     """
-    Reads the file structure so Gemini knows where to put files.
+    Reads the file structure so the AI knows where to put files.
     """
     file_list = []
     for root, dirs, files in os.walk(path):
@@ -47,14 +51,14 @@ def get_file_structure(path):
                 file_list.append(os.path.join(root, file))
     return "\n".join(file_list)
 
-def generate_code_with_gemini(ticket_id, description, user_prompt, structure):
+def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     """
-    The Brain: Sends context to Gemini and asks for JSON output.
+    The Brain: Sends context to OpenAI Proxy and asks for JSON output.
     """
     
-    prompt = f"""
-    You are a Senior iOS Engineer.
+    system_prompt = "You are a Senior iOS Engineer. Return ONLY valid JSON."
     
+    user_message = f"""
     TASK:
     Analyze the following Jira requirement and generate the necessary Swift code.
     You must also include a Unit Test (XCTest) file for the new functionality.
@@ -81,16 +85,31 @@ def generate_code_with_gemini(ticket_id, description, user_prompt, structure):
     }}
     """
 
-    print("🧠 Gemini is thinking...")
-    response = model.generate_content(prompt)
+    print(f"🧠 AI ({AI_MODEL_DEPLOYMENT}) is thinking...")
     
-    # Since we enforced JSON mime_type, we can parse directly
     try:
-        return json.loads(response.text)
+        response = client.chat.completions.create(
+            model=AI_MODEL_DEPLOYMENT, # In Azure, model is often ignored if deployment is set in client, but passing it is safe
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.2,
+            response_format={"type": "json_object"}
+        )
+        
+        content = response.choices[0].message.content
+        return json.loads(content)
+        
+    except openai.APIError as e:
+        print(f"❌ OpenAI API Error: {e}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"❌ Error parsing JSON response: {e}")
+        print(f"Raw content: {content}")
+        return None
     except Exception as e:
-        print(f"Error parsing Gemini response: {e}")
-        # Fallback debug print
-        print(response.text)
+        print(f"❌ Unexpected Error: {e}")
         return None
 
 def main():
@@ -119,8 +138,8 @@ def main():
     # 3. Generate Code
     # We pass the Jira Description as the primary instruction
     # args.prompt is just "extra" info now
-    print("🧠 Gemini is reading the ticket and coding...")
-    generated_data = generate_code_with_gemini(
+    print("🧠 AI is reading the ticket and coding...")
+    generated_data = generate_code_with_proxy(
         ticket_id=args.ticket, 
         description=ticket_instruction, 
         user_prompt=args.prompt, 
@@ -133,7 +152,7 @@ def main():
 
     # 4. Git Operations
     repo = Repo(REPO_PATH)
-    branch_name = f"feature/{args.ticket.lower()}-gemini-auto2"
+    branch_name = f"feature/{args.ticket.lower()}-ai-auto"
     
     print(f"🌿 Creating branch {branch_name}...")
     
@@ -173,7 +192,7 @@ def main():
 
     # 6. Commit & Push
     # ... (rest of script is fine)
-    repo.index.commit(f"Gemini: Implemented {args.ticket}")
+    repo.index.commit(f"AI: Implemented {args.ticket}")
     print("🚀 Pushing to origin...")
     repo.remote().push(branch_name)
 
@@ -199,7 +218,7 @@ def main():
             print("🆕 Creating new Pull Request...")
             pr = gh_repo.create_pull(
                 title=f"[{args.ticket}] {generated_data['pr_title']}",
-                body=f"### Jira: [{args.ticket}]({JIRA_SERVER}/browse/{args.ticket})\n\n{generated_data['pr_body']}\n\n*Generated by Gemini 1.5 Flash ⚡*",
+                body=f"### Jira: [{args.ticket}]({JIRA_SERVER}/browse/{args.ticket})\n\n{generated_data['pr_body']}\n\n*Generated by AI Agent 🤖*",
                 head=branch_name,
                 base="main"
             )

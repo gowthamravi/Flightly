@@ -1,23 +1,11 @@
-//
-//  Button+Extension.swift
-//  FlightSearch
-//
-//  Created by Gowtham R on 29/02/24.
-//
-
-import Foundation
 import SwiftUI
 
-struct FlightlyButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(height: 50)
-            .frame(maxWidth: .infinity)
-            .foregroundColor(.white)
-            .background(Color(red: 238/255, green: 119/255, blue: 70/255))
-            .clipShape(Capsule())
-            .font(.custom("Avenir-HeavyOblique", size: 20))
-            .padding()
-        
+extension Button {
+    /// A custom modifier to apply a specific color to a Button.
+    /// - Parameter color: The UIColor to apply to the button's background.
+    func applyFlightlyColor(_ color: UIColor) -> some View {
+        self.background(Color(color))
+            .foregroundColor(.white) // Assuming white text is desired for contrast
+            .cornerRadius(8) // Example corner radius, adjust as needed
     }
 }

@@ -4,15 +4,15 @@ import XCTest
 class ButtonExtensionTests: XCTestCase {
 
     func testApplyFlightlyStyle() {
-        // Arrange
+        // Given
         let button = UIButton()
         
-        // Act
+        // When
         button.applyFlightlyStyle()
         
-        // Assert
+        // Then
         let expectedBackgroundColor = UIColor(red: 227/255, green: 143/255, blue: 188/255, alpha: 1.0)
-        XCTAssertEqual(button.backgroundColor, expectedBackgroundColor, "Button background color should be updated to the new brand color.")
-        XCTAssertEqual(button.titleColor(for: .normal), UIColor.white, "Button text color should remain white.")
+        XCTAssertEqual(button.backgroundColor, expectedBackgroundColor, "Button background color should match the new brand color.")
+        XCTAssertEqual(button.titleColor(for: .normal), .white, "Button text color should remain white.")
     }
 }

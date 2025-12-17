@@ -1,58 +1,49 @@
-//
-//  FlightSearchView.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 03/11/2023.
-//
-
 import SwiftUI
-import ServiceHandler
-import ActivityIndicatorView
 
 struct FlightSearchView: View {
-    @EnvironmentObject private var flight: FlightSearch
-    @EnvironmentObject private var router: Router
-    @State private var showLoadingIndicator: Bool = false
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            
-            VStack(alignment: .leading) {
-                Text("Let's")
-                    .font(.title2)
-                    .frame(alignment: .leading)
-                Text("Explore")
-                    .font(.title)
-                    .frame(alignment: .leading)
-            } .frame(maxWidth: .infinity, alignment: .topLeading)
-            VStack(alignment: .leading, spacing: 20) {
+    @State private var departureDate: Date = Date()
+    @State private var returnDate: Date = Date()
+    @State private var isRoundTrip: Bool = false
 
-                StationView(stationType: .origin)
-                StationView(stationType: .destination)
-                
-                DateView()
-                    .environmentObject(flight)
-                PassengerView()
-                    .environmentObject(flight)
-                
-                Spacer()
-                
-                LetsGoView(showLoadingIndicator: $showLoadingIndicator)
+    var body: some View {
+        VStack(spacing: 16) {
+            Toggle("Round Trip", isOn: $isRoundTrip)
+                .padding()
+
+            DatePicker("Departure Date", selection: $departureDate, displayedComponents: .date)
+                .datePickerStyle(GraphicalDatePickerStyle())
+                .padding()
+
+            if isRoundTrip {
+                DatePicker("Return Date", selection: $returnDate, displayedComponents: .date)
+                    .datePickerStyle(GraphicalDatePickerStyle())
+                    .padding()
             }
-            if showLoadingIndicator {
-                ActivityIndicatorView(isVisible: $showLoadingIndicator, type: .default())
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.red)
+
+            Button(action: {
+                searchFlights()
+            }) {
+                Text("Search Flights")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
             }
+            .padding()
         }
-        .navigationTitle("Flight Search")
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
+        .navigationTitle("Flight Search")
+    }
+
+    private func searchFlights() {
+        // Logic for searching flights based on the selected dates and trip type
+        print("Searching flights for departure: \(departureDate) and return: \(isRoundTrip ? returnDate : nil)")
     }
 }
 
-#Preview {
-    FlightSearchView()
-        .environmentObject(FlightSearch(service: FlightSearchingService(service: NetworkService())))
-        .environmentObject(Router.shared)
+struct FlightSearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlightSearchView()
+    }
 }

@@ -41,6 +41,7 @@ g = Github(auth=Auth.Token(GITHUB_TOKEN))
 def get_file_structure(path):
     """
     Reads the file structure so the AI knows where to put files.
+    Returns RELATIVE paths from the repo root.
     """
     file_list = []
     for root, dirs, files in os.walk(path):
@@ -48,7 +49,10 @@ def get_file_structure(path):
             continue
         for file in files:
             if file.endswith(".swift"):
-                file_list.append(os.path.join(root, file))
+                # Use relpath to give AI cleaner context
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, path)
+                file_list.append(rel_path)
     return "\n".join(file_list)
 
 def loading_animation(stop_event):
@@ -71,7 +75,6 @@ def loading_animation(stop_event):
 def extract_figma_key(url):
     """
     Extracts the file key from a Figma URL.
-    Supports: https://www.figma.com/file/KEY/... or https://www.figma.com/design/KEY/...
     """
     match = re.search(r"figma\.com/(?:file|design)/([a-zA-Z0-9]+)", url)
     if match:
@@ -94,7 +97,6 @@ def get_figma_metadata(file_key, token):
             data = response.json()
             name = data.get("name", "Unknown Design")
             last_modified = data.get("lastModified", "")
-            # We can extract more structure if needed, but for now getting the name verify it exists
             return f"Figma Design Name: {name} (Last Modified: {last_modified})"
         else:
             return f"Error fetching Figma data: {response.text}"
@@ -125,6 +127,40 @@ def add_file_to_xcode(file_path, target_name="FlightSearch"):
     except Exception as e:
         print(f"⚠️ Error running add_file.rb: {e}")
 
+def sanitize_path(path):
+    """
+    Ensures the path is relative to the current working directory.
+    Strips absolute prefixes or 'Users/...' garbage if present.
+    """
+    # 1. Normalize separators
+    path = os.path.normpath(path)
+    cwd = os.getcwd()
+    
+    # 2. If it's absolute and starts with CWD, make it relative
+    if os.path.isabs(path):
+        if path.startswith(cwd):
+            return os.path.relpath(path, cwd)
+        # If it's absolute but NOT in CWD, that's dangerous/wrong for this tool
+        # Try to guess: if it contains the repo name 'Flightly', strip up to it
+        if "Flightly" in path:
+            # simple heuristic: take everything after 'Flightly/'
+            parts = path.split("Flightly/")
+            if len(parts) > 1:
+                return parts[-1]
+    
+    # 3. If it starts with "Users/" but is relative (which caused the bug), strip it
+    # Heuristic: check if path components start with Users -> User -> Documents -> Flightly
+    parts = path.split(os.sep)
+    if parts[0] == "Users":
+        # Look for the project folder name in the parts
+        project_name = os.path.basename(cwd)
+        if project_name in parts:
+            idx = parts.index(project_name)
+            if idx + 1 < len(parts):
+                return os.path.join(*parts[idx+1:])
+    
+    return path
+
 def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     """
     The Brain: Sends context to OpenAI Proxy and asks for JSON output.
@@ -150,13 +186,18 @@ def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     {{
         "files": [
             {{
-                "path": "path/to/NewFile.swift",
+                "path": "FlightSearch/Views/NewFile.swift",
                 "content": "import UIKit..."
             }}
         ],
         "pr_title": "A concise title for the Pull Request",
         "pr_body": "A summary of changes for the PR description"
     }}
+    
+    IMPORTANT RULES:
+    1. The 'path' in the JSON must be RELATIVE to the project root (e.g., "FlightSearch/Views/MyFile.swift").
+    2. DO NOT include absolute paths (like /Users/...).
+    3. DO NOT create new top-level folders unless absolutely necessary. Use existing structure from PROJECT STRUCTURE.
     """
 
     stop_event = threading.Event()
@@ -241,6 +282,7 @@ def main():
 
     # 2. Analyze Project
     print("📂 Analyzing Project Structure...")
+    # This now returns RELATIVE paths
     structure = get_file_structure(REPO_PATH)
 
     # 3. Generate Code
@@ -284,7 +326,12 @@ def main():
     # 5. Write Files
     for file_obj in generated_data['files']:
         raw_path = file_obj['path']
-        file_path = os.path.normpath(raw_path) 
+        
+        # Sanitize path to prevent 'Users/...' absolute nesting bug
+        file_path = sanitize_path(raw_path)
+        
+        if file_path != raw_path:
+            print(f"⚠️  Fixed path: '{raw_path}' -> '{file_path}'")
         
         print(f"📝 Writing {file_path}...")
         

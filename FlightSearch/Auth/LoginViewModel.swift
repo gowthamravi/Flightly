@@ -3,48 +3,39 @@ import Combine
 
 @MainActor
 class LoginViewModel: ObservableObject {
-    // MARK: - Published Properties
-    @Published var email = ""
+    
+    @Published var username = ""
     @Published var password = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isAuthenticated = false
 
-    // MARK: - Private Properties
     private let authService: AuthenticationServiceProtocol
 
-    // MARK: - Computed Properties
-    var isLoginButtonDisabled: Bool {
-        // Basic validation
-        return email.isEmpty || password.isEmpty || isLoading
-    }
-
-    // MARK: - Initializer
-    init(authService: AuthenticationServiceProtocol) {
+    init(authService: AuthenticationServiceProtocol = AuthenticationService()) {
         self.authService = authService
     }
 
-    // MARK: - Public Methods
-    func login() {
-        guard !isLoginButtonDisabled else { return }
+    var isLoginButtonDisabled: Bool {
+        username.isEmpty || password.isEmpty || isLoading
+    }
 
+    func login() {
         isLoading = true
         errorMessage = nil
 
-        Task {
-            let result = await authService.login(email: email, password: password)
-            handleLoginResult(result)
-        }
-    }
-
-    // MARK: - Private Helper Methods
-    private func handleLoginResult(_ result: Result<User, AuthenticationError>) {
-        isLoading = false
-        switch result {
-        case .success:
-            isAuthenticated = true
-        case .failure(let error):
-            errorMessage = error.localizedDescription
+        authService.login(username: username, password: password) { [weak self] result in
+            guard let self = self else { return }
+            
+            self.isLoading = false
+            switch result {
+            case .success(let user):
+                print("Successfully logged in user: \(user.username)")
+                self.isAuthenticated = true
+            case .failure(let error):
+                self.errorMessage = (error as? LocalizedError)?.errorDescription ?? "An unknown error occurred."
+                self.isAuthenticated = false
+            }
         }
     }
 }

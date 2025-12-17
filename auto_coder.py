@@ -13,7 +13,7 @@ import sys
 import subprocess
 import requests
 import re
-from pbxproj import XcodeProject
+# Removed pbxproj import
 
 # Load environment variables from .env file
 load_dotenv()
@@ -158,31 +158,29 @@ def get_figma_metadata(file_key):
         print(f"❌ Figma Exctraction Error: {e}")
         return None
 
-# --- XCODE INTEGRATION ---
+# --- XCODE INTEGRATION (Ruby Bridge) ---
 def add_file_to_xcode(file_path):
     """
-    Adds a file to the Xcode project using pbxproj.
-    This ensures the file appears in the Xcode file navigator.
+    Adds a file to the Xcode project using the external Ruby script.
     """
-    project_path = "FlightSearch.xcodeproj/project.pbxproj"
-    
-    if not os.path.exists(project_path):
-        print(f"⚠️ Project file not found at {project_path}. Skipping Xcode registration.")
+    if not os.path.exists("add_file.rb"):
+        print("⚠️ add_file.rb not found. Skipping Xcode registration.")
         return
 
+    project_path = "FlightSearch.xcodeproj"
+    target_name = "FlightSearch"
+    
+    # Use bundle exec to ensure gems are found
+    cmd = ["bundle", "exec", "ruby", "add_file.rb", project_path, file_path, target_name]
+    
     try:
-        project = XcodeProject.load(project_path)
-        # Add file to the project. 
-        # force=False prevents duplicates (though pbxproj's duplicate check is basic)
-        # Using default target usually works if there's one main target
-        project.add_file(file_path, force=False)
-        
-        # Save changes back to file
-        project.save()
-        print(f"🔹 Registered {os.path.basename(file_path)} in Xcode project.")
-        
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"🔹 {result.stdout.strip()}")
+        else:
+            print(f"⚠️ Failed to add file to Xcode: {result.stderr.strip()}")
     except Exception as e:
-        print(f"⚠️ Failed to add file to Xcode project: {e}")
+        print(f"⚠️ Error running add_file.rb: {e}")
 
 # --- BUILD VERIFICATION ---
 def run_build_verification():
@@ -330,7 +328,7 @@ def write_files(generated_data, repo):
             # Add to Git
             repo.index.add([file_path])
             
-            # Add to Xcode
+            # Add to Xcode (Calling Ruby Script now)
             add_file_to_xcode(file_path)
             
         except Exception as e:

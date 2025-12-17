@@ -139,13 +139,6 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
-		8BA97A61D4EEF185D69852E1 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		A341ACA12AF7B9C400CF69E5 /* Flights */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,7 +183,6 @@
 				A378D8652AF19C16003D3BDB /* Assets.xcassets */,
 				EDB4F73F2B76A8090092D19B /* airport.json */,
 				A378D8672AF19C16003D3BDB /* Preview Content */,
-				8BA97A61D4EEF185D69852E1 /* Services */,
 				0D8004D433F1E642A972F6CF /* Auth */,
 			);
 			path = FlightSearch;

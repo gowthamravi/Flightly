@@ -1,48 +1,38 @@
 import SwiftUI
 
 struct FlightSearchView: View {
-    @State private var departure: String = ""
-    @State private var destination: String = ""
-    @State private var travelDate: Date = Date()
-    @State private var passengerCount: Int = 1
+    @State private var departureStation: String = ""
+    @State private var arrivalStation: String = ""
+    @State private var departureDate: Date = Date()
+    @State private var returnDate: Date = Date()
+    @State private var isRoundTrip: Bool = false
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                TextField("Departure", text: $departure)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+            VStack(spacing: 16) {
+                StationView(stationName: $departureStation, placeholder: "Departure")
+                StationView(stationName: $arrivalStation, placeholder: "Arrival")
 
-                TextField("Destination", text: $destination)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+                DateView(date: $departureDate, title: "Departure Date")
 
-                DatePicker("Travel Date", selection: $travelDate, displayedComponents: .date)
-                    .datePickerStyle(GraphicalDatePickerStyle())
-                    .padding()
-
-                Stepper(value: $passengerCount, in: 1...10) {
-                    Text("Passengers: \(passengerCount)")
+                if isRoundTrip {
+                    DateView(date: $returnDate, title: "Return Date")
                 }
-                .padding()
 
-                Button(action: {
-                    print("Search Flights")
-                }) {
+                Toggle("Round Trip", isOn: $isRoundTrip)
+                    .toggleStyle(SwitchToggleStyle(tint: .blue))
+
+                NavigationLink(destination: PassengerView()) {
                     Text("Search Flights")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
                         .frame(maxWidth: .infinity)
+                        .padding()
                         .background(Color.blue)
-                        .cornerRadius(10)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
-                .padding()
-
-                Spacer()
             }
-            .navigationTitle("Flight Search")
             .padding()
+            .navigationTitle("Flight Search")
         }
     }
 }

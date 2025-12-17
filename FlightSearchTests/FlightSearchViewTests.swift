@@ -4,30 +4,54 @@ import SwiftUI
 
 final class FlightSearchViewTests: XCTestCase {
 
-    func testFlightSearchView_initialState() {
-        let flightSearchView = FlightSearchView()
-        let view = UIHostingController(rootView: flightSearchView)
+    func testFlightSearchViewInitialState() {
+        let view = FlightSearchView()
+        let hostingController = UIHostingController(rootView: view)
 
-        XCTAssertNotNil(view.view)
-        XCTAssertEqual(flightSearchView.passengerCount, 1)
-        XCTAssertEqual(flightSearchView.departure, "")
-        XCTAssertEqual(flightSearchView.destination, "")
+        XCTAssertNotNil(hostingController.view)
+        hostingController.loadViewIfNeeded()
+
+        let departureStation = view.departureStation
+        let arrivalStation = view.arrivalStation
+        let isRoundTrip = view.isRoundTrip
+
+        XCTAssertEqual(departureStation, "")
+        XCTAssertEqual(arrivalStation, "")
+        XCTAssertFalse(isRoundTrip)
     }
 
-    func testFlightSearchView_updatePassengerCount() {
-        var flightSearchView = FlightSearchView()
-        flightSearchView.passengerCount = 3
-        XCTAssertEqual(flightSearchView.passengerCount, 3)
+    func testToggleRoundTrip() {
+        var view = FlightSearchView()
+        view.isRoundTrip = false
+
+        XCTAssertFalse(view.isRoundTrip)
+
+        view.isRoundTrip.toggle()
+        XCTAssertTrue(view.isRoundTrip)
     }
 
-    func testFlightSearchView_searchButtonAction() {
-        let expectation = XCTestExpectation(description: "Search button tapped")
-        let flightSearchView = FlightSearchView()
+    func testNavigationToPassengerView() {
+        let view = FlightSearchView()
+        let hostingController = UIHostingController(rootView: view)
 
-        // Simulate button tap
-        flightSearchView.body
-        expectation.fulfill()
+        XCTAssertNotNil(hostingController.view)
+        hostingController.loadViewIfNeeded()
 
-        wait(for: [expectation], timeout: 1.0)
+        let navigationLink = hostingController.view.findSubview(ofType: NavigationLink.self)
+        XCTAssertNotNil(navigationLink)
+    }
+}
+
+private extension UIView {
+    func findSubview<T>(ofType type: T.Type) -> T? {
+        if let view = self as? T {
+            return view
+        }
+        for subview in subviews {
+            if let view = subview.findSubview(ofType: type) {
+                return view
+            }
+        }
+        return nil
     }
 }

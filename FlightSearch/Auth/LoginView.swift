@@ -3,9 +3,23 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
 
-    // Default initializer uses the mock service. In a real app, you'd inject a live service.
-    init(viewModel: LoginViewModel = LoginViewModel(authService: MockAuthenticationService())) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init(viewModel: LoginViewModel? = nil) {
+        if let viewModel {
+            _viewModel = StateObject(wrappedValue: viewModel)
+        } else {
+            // Create the default ViewModel on the main actor to satisfy actor isolation
+            let defaultVM: LoginViewModel = {
+                if Thread.isMainThread {
+                    return LoginViewModel(authService: MockAuthenticationService())
+                } else {
+                    // If somehow not on main, synchronously hop to main
+                    return DispatchQueue.main.sync {
+                        LoginViewModel(authService: MockAuthenticationService())
+                    }
+                }
+            }()
+            _viewModel = StateObject(wrappedValue: defaultVM)
+        }
     }
 
     var body: some View {
@@ -101,32 +115,5 @@ struct LoginView: View {
                     .cornerRadius(10)
                     .tint(.primary)
             }
-    }
-}
-
-// MARK: - Previews
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Standard preview
-        LoginView()
-            .previewDisplayName("Default")
-
-        // Preview with an error message
-        static var errorViewModel: LoginViewModel {
-            let vm = LoginViewModel(authService: MockAuthenticationService())
-            vm.errorMessage = "Invalid email or password."
-            return vm
-        }
-        LoginView(viewModel: errorViewModel)
-            .previewDisplayName("Error State")
-
-        // Preview in loading state
-        static var loadingViewModel: LoginViewModel {
-            let vm = LoginViewModel(authService: MockAuthenticationService())
-            vm.isLoading = true
-            return vm
-        }
-        LoginView(viewModel: loadingViewModel)
-            .previewDisplayName("Loading State")
     }
 }

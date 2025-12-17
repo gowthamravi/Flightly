@@ -217,16 +217,25 @@ def main():
 
     # 1.5 Figma Integration
     extra_context = ""
-    # Check if prompt contains figma url
+    figma_key = None
+    
+    # Check prompt for Figma
     if args.prompt and "figma.com" in args.prompt:
-        print("🎨 Figma URL detected. Analyzing design...")
-        file_key = extract_figma_key(args.prompt)
-        if file_key:
-            figma_info = get_figma_metadata(file_key, FIGMA_TOKEN)
-            extra_context += f"\n\n[FIGMA METADATA]\n{figma_info}\n"
-            print(f"   - {figma_info}")
-        else:
-            print("⚠️ Could not extract Figma key from URL.")
+        figma_key = extract_figma_key(args.prompt)
+        print("🎨 Figma URL found in command argument.")
+    
+    # If not in prompt, check Jira description
+    if not figma_key and ticket_instruction and "figma.com" in ticket_instruction:
+        figma_key = extract_figma_key(ticket_instruction)
+        print("🎨 Figma URL found in Jira Ticket.")
+
+    if figma_key:
+        print("🔍 Analyzing Figma Design...")
+        figma_info = get_figma_metadata(figma_key, FIGMA_TOKEN)
+        extra_context += f"\n\n[FIGMA METADATA]\n{figma_info}\n"
+        print(f"   - {figma_info}")
+    elif args.prompt and "figma.com" in args.prompt:
+         print("⚠️ Could not extract Figma key from URL in prompt.")
     
     full_prompt = args.prompt + extra_context
 

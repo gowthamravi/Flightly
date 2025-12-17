@@ -1,58 +1,44 @@
-//
-//  FlightSearchView.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 03/11/2023.
-//
-
 import SwiftUI
-import ServiceHandler
-import ActivityIndicatorView
 
 struct FlightSearchView: View {
-    @EnvironmentObject private var flight: FlightSearch
-    @EnvironmentObject private var router: Router
-    @State private var showLoadingIndicator: Bool = false
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            
-            VStack(alignment: .leading) {
-                Text("Let's")
-                    .font(.title2)
-                    .frame(alignment: .leading)
-                Text("Explore")
-                    .font(.title)
-                    .frame(alignment: .leading)
-            } .frame(maxWidth: .infinity, alignment: .topLeading)
-            VStack(alignment: .leading, spacing: 20) {
+    @State private var departureStation: String = ""
+    @State private var arrivalStation: String = ""
+    @State private var departureDate: Date = Date()
+    @State private var passengerCount: Int = 1
 
-                StationView(stationType: .origin)
-                StationView(stationType: .destination)
-                
-                DateView()
-                    .environmentObject(flight)
-                PassengerView()
-                    .environmentObject(flight)
-                
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 16) {
+                StationView(title: "Departure", station: $departureStation)
+                StationView(title: "Arrival", station: $arrivalStation)
+
+                DateView(selectedDate: $departureDate)
+
+                PassengerView(passengerCount: $passengerCount)
+
+                Button(action: {
+                    // Handle search action
+                }) {
+                    Text("Search Flights")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+
                 Spacer()
-                
-                LetsGoView(showLoadingIndicator: $showLoadingIndicator)
             }
-            if showLoadingIndicator {
-                ActivityIndicatorView(isVisible: $showLoadingIndicator, type: .default())
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.red)
-            }
+            .padding()
+            .navigationTitle("Flight Search")
         }
-        .navigationTitle("Flight Search")
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
     }
 }
 
-#Preview {
-    FlightSearchView()
-        .environmentObject(FlightSearch(service: FlightSearchingService(service: NetworkService())))
-        .environmentObject(Router.shared)
+struct FlightSearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlightSearchView()
+    }
 }

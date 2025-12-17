@@ -4,3 +4,8 @@ check_models
 auto_coder.py
 check_api_limits.py
 check_models.py
+
+.DS_Store
+*.xcuserstate
+vendor/
+.env

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BAFD471D45A835624290BEE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A8B80140A705FDF538C047 /* LoginView.swift */; };
+		1D329E5F19D987253146B6B0 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA67F8AFD38781DA50D39DF /* AuthenticationService.swift */; };
+		3BEE856363C488283E06C122 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBBF06CC2CEA6499CFCCD2D /* ContentView.swift */; };
 		532388F055DA3CFB8887E234 /* RubyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56594AF51F184AD2DDFF9CA2 /* RubyTest.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
@@ -38,6 +41,8 @@
 		A3829BEB2AF2EF5400B927FF /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3829BEA2AF2EF5400B927FF /* Station.swift */; };
 		A3B5EC3A2AF41141002EC7DE /* FlightSearchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */; };
 		A3DAB6A82AF7B62D00B3E1B2 /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = A3DAB6A72AF7B62D00B3E1B2 /* ServiceHandler */; };
+		E01CD7D5E8C8808203C21942 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8855F17894D6364E3BA1C63 /* AuthenticationService.swift */; };
+		E2679D43C7227DBFDEEDB52A /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9902AB88E0C71440FFE2E56A /* LoginViewModel.swift */; };
 		ED4E73CE2B8F1446004F8882 /* NavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */; };
 		ED862DED2B6EAAD900D8B3F7 /* SwiftMacros in Frameworks */ = {isa = PBXBuildFile; productRef = ED862DEC2B6EAAD900D8B3F7 /* SwiftMacros */; };
 		EDB4F7302B6EAEBD0092D19B /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F72F2B6EAEBD0092D19B /* SwiftBasicFormat */; };
@@ -57,6 +62,9 @@
 
 /* Begin PBXFileReference section */
 		56594AF51F184AD2DDFF9CA2 /* RubyTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RubyTest.swift; sourceTree = "<group>"; };
+		9902AB88E0C71440FFE2E56A /* LoginViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		9BBBF06CC2CEA6499CFCCD2D /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9EA67F8AFD38781DA50D39DF /* AuthenticationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
 		A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsListView.swift; sourceTree = "<group>"; };
 		A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFlightView.swift; sourceTree = "<group>"; };
@@ -87,6 +95,8 @@
 		A3829BE62AF2EA3E00B927FF /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
+		A5A8B80140A705FDF538C047 /* LoginView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		E8855F17894D6364E3BA1C63 /* AuthenticationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPath.swift; sourceTree = "<group>"; };
 		EDB4F73F2B76A8090092D19B /* airport.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = airport.json; sourceTree = "<group>"; };
 		EDBDC2D52B90B7C10016D07B /* Button+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extension.swift"; sourceTree = "<group>"; };
@@ -116,6 +126,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8BA97A61D4EEF185D69852E1 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9EA67F8AFD38781DA50D39DF /* AuthenticationService.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
 		A341ACA12AF7B9C400CF69E5 /* Flights */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +179,9 @@
 				A378D8652AF19C16003D3BDB /* Assets.xcassets */,
 				EDB4F73F2B76A8090092D19B /* airport.json */,
 				A378D8672AF19C16003D3BDB /* Preview Content */,
+				9BBBF06CC2CEA6499CFCCD2D /* ContentView.swift */,
+				EE3C1AAD96FF775C26D54ACE /* Login */,
+				8BA97A61D4EEF185D69852E1 /* Services */,
 			);
 			path = FlightSearch;
 			sourceTree = "<group>";
@@ -253,6 +274,16 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EE3C1AAD96FF775C26D54ACE /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				9902AB88E0C71440FFE2E56A /* LoginViewModel.swift */,
+				A5A8B80140A705FDF538C047 /* LoginView.swift */,
+				E8855F17894D6364E3BA1C63 /* AuthenticationService.swift */,
+			);
+			name = Login;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -378,6 +409,11 @@
 				EDBDC2DA2B90EB8D0016D07B /* FavouriteView.swift in Sources */,
 				A37A7A242AF59DD9003789FC /* FlightSearch.swift in Sources */,
 				532388F055DA3CFB8887E234 /* RubyTest.swift in Sources */,
+				3BEE856363C488283E06C122 /* ContentView.swift in Sources */,
+				E2679D43C7227DBFDEEDB52A /* LoginViewModel.swift in Sources */,
+				1BAFD471D45A835624290BEE /* LoginView.swift in Sources */,
+				E01CD7D5E8C8808203C21942 /* AuthenticationService.swift in Sources */,
+				1D329E5F19D987253146B6B0 /* AuthenticationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

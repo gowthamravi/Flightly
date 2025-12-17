@@ -3,50 +3,45 @@ import XCTest
 
 final class LoginViewModelTests: XCTestCase {
 
-    func testLoginSuccess() {
-        let expectation = self.expectation(description: "Login should succeed")
-        let mockService = MockAuthenticationService(result: .success(()))
-        AuthenticationService.shared = mockService
+    func testLoginWithEmptyFields() {
+        let viewModel = LoginViewModel()
+        viewModel.email = ""
+        viewModel.password = ""
 
-        mockService.login(email: "test@example.com", password: "password123") { result in
-            switch result {
-            case .success:
-                expectation.fulfill()
-            case .failure:
-                XCTFail("Login should not fail")
-            }
-        }
+        viewModel.login()
 
-        waitForExpectations(timeout: 2.0, handler: nil)
+        XCTAssertEqual(viewModel.errorMessage, "Please fill in all fields.")
     }
 
-    func testLoginFailure() {
+    func testLoginWithInvalidCredentials() {
+        let viewModel = LoginViewModel()
+        viewModel.email = "invalid@example.com"
+        viewModel.password = "wrongpassword"
+
         let expectation = self.expectation(description: "Login should fail")
-        let mockService = MockAuthenticationService(result: .failure(NSError(domain: "Test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid credentials"])))
-        AuthenticationService.shared = mockService
 
-        mockService.login(email: "test@example.com", password: "wrongpassword") { result in
-            switch result {
-            case .success:
-                XCTFail("Login should not succeed")
-            case .failure(let error):
-                XCTAssertEqual(error.localizedDescription, "Invalid credentials")
-                expectation.fulfill()
-            }
+        viewModel.login { success in
+            XCTAssertFalse(success)
+            XCTAssertEqual(viewModel.errorMessage, "Invalid email or password.")
+            expectation.fulfill()
         }
 
         waitForExpectations(timeout: 2.0, handler: nil)
     }
-}
 
-class MockAuthenticationService: AuthenticationService {
-    private let result: Result<Void, Error>
+    func testLoginWithValidCredentials() {
+        let viewModel = LoginViewModel()
+        viewModel.email = "valid@example.com"
+        viewModel.password = "correctpassword"
 
-    init(result: Result<Void, Error>) {
-        self.result = result
-    }
+        let expectation = self.expectation(description: "Login should succeed")
 
-    override func login(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        completion(result)
+        viewModel.login { success in
+            XCTAssertTrue(success)
+            XCTAssertNil(viewModel.errorMessage)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
 }

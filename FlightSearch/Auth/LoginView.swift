@@ -31,6 +31,7 @@ struct LoginView: View {
                     ProgressView()
                 } else {
                     Text("Login")
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
@@ -38,7 +39,7 @@ struct LoginView: View {
                         .cornerRadius(8)
                 }
             }
-            .disabled(isLoading || email.isEmpty || password.isEmpty)
+            .disabled(isLoading)
 
             Spacer()
         }
@@ -46,16 +47,21 @@ struct LoginView: View {
     }
 
     private func login() {
+        guard !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please fill in all fields."
+            return
+        }
+
         isLoading = true
         errorMessage = nil
 
-        AuthenticationService.shared.login(email: email, password: password) { result in
+        AuthenticationService.login(email: email, password: password) { success, error in
             isLoading = false
-            switch result {
-            case .success:
-                print("Login successful")
-            case .failure(let error):
-                errorMessage = error.localizedDescription
+
+            if success {
+                // Handle successful login
+            } else {
+                errorMessage = error ?? "An unknown error occurred."
             }
         }
     }

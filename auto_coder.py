@@ -206,6 +206,13 @@ def main():
         new_branch = repo.heads[branch_name]
         
     new_branch.checkout(force=True)
+    # RESTORE TOOLING: Ensure add_file.rb and others are present in the new branch
+    print("🔧 Restoring tooling files from main...")
+    try:
+        repo.git.checkout("main", "--", "add_file.rb", "Gemfile", "run_autocoder.sh")
+    except Exception as e:
+        print(f"⚠️ Failed to restore tooling files: {e}")
+
 
 # 5. Write Files
     for file_obj in generated_data['files']:

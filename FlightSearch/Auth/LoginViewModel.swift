@@ -3,22 +3,28 @@ import Combine
 
 @MainActor
 class LoginViewModel: ObservableObject {
+    // MARK: - Published Properties
     @Published var email = ""
     @Published var password = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isAuthenticated = false
 
-    private let authService: AuthServiceProtocol
+    // MARK: - Private Properties
+    private let authService: AuthenticationServiceProtocol
 
+    // MARK: - Computed Properties
     var isLoginButtonDisabled: Bool {
-        email.isEmpty || password.isEmpty || isLoading
+        // Basic validation
+        return email.isEmpty || password.isEmpty || isLoading
     }
 
-    init(authService: AuthServiceProtocol = AuthService()) {
+    // MARK: - Initializer
+    init(authService: AuthenticationServiceProtocol) {
         self.authService = authService
     }
 
+    // MARK: - Public Methods
     func login() {
         guard !isLoginButtonDisabled else { return }
 
@@ -26,18 +32,19 @@ class LoginViewModel: ObservableObject {
         errorMessage = nil
 
         Task {
-            do {
-                let _ = try await authService.login(email: email, password: password)
-                // On success, update state to trigger navigation or view change
-                self.isAuthenticated = true
-            } catch {
-                if let authError = error as? AuthError {
-                    self.errorMessage = authError.localizedDescription
-                } else {
-                    self.errorMessage = "An unexpected error occurred."
-                }
-            }
-            self.isLoading = false
+            let result = await authService.login(email: email, password: password)
+            handleLoginResult(result)
+        }
+    }
+
+    // MARK: - Private Helper Methods
+    private func handleLoginResult(_ result: Result<User, AuthenticationError>) {
+        isLoading = false
+        switch result {
+        case .success:
+            isAuthenticated = true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
         }
     }
 }

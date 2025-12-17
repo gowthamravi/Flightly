@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14580F354A1B38EE8F65D2A2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59417F0D635B3F68C1A2A3E0 /* LoginView.swift */; };
 		1BAFD471D45A835624290BEE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A8B80140A705FDF538C047 /* LoginView.swift */; };
 		1D329E5F19D987253146B6B0 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA67F8AFD38781DA50D39DF /* AuthenticationService.swift */; };
 		3BEE856363C488283E06C122 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBBF06CC2CEA6499CFCCD2D /* ContentView.swift */; };
+		4BA415F8088D8ACABE59BF3D /* LoginViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C1396B017FE1790F25A64A /* LoginViewModelTests.swift */; };
 		532388F055DA3CFB8887E234 /* RubyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56594AF51F184AD2DDFF9CA2 /* RubyTest.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
@@ -61,7 +63,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		14C1396B017FE1790F25A64A /* LoginViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModelTests.swift; sourceTree = "<group>"; };
 		56594AF51F184AD2DDFF9CA2 /* RubyTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RubyTest.swift; sourceTree = "<group>"; };
+		59417F0D635B3F68C1A2A3E0 /* LoginView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9902AB88E0C71440FFE2E56A /* LoginViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		9BBBF06CC2CEA6499CFCCD2D /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9EA67F8AFD38781DA50D39DF /* AuthenticationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
@@ -126,6 +130,43 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03FE73F05DE92A73C99C4E26 /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				E45FEA74BE5093B35E591626 /* Flightly */,
+			);
+			name = Documents;
+			path = Documents;
+			sourceTree = "<group>";
+		};
+		4BF96A6B88BE61AB02474050 /* Users */ = {
+			isa = PBXGroup;
+			children = (
+				7ED3D62D4EA75B092CBED558 /* Gowtham_Ravikumar */,
+			);
+			name = Users;
+			path = Users;
+			sourceTree = "<group>";
+		};
+		517E8E4F6A1DB66DB5AA9EE1 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				59417F0D635B3F68C1A2A3E0 /* LoginView.swift */,
+				14C1396B017FE1790F25A64A /* LoginViewModelTests.swift */,
+			);
+			name = Auth;
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		7ED3D62D4EA75B092CBED558 /* Gowtham_Ravikumar */ = {
+			isa = PBXGroup;
+			children = (
+				03FE73F05DE92A73C99C4E26 /* Documents */,
+			);
+			name = Gowtham_Ravikumar;
+			path = Gowtham_Ravikumar;
+			sourceTree = "<group>";
+		};
 		8BA97A61D4EEF185D69852E1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +193,7 @@
 				A378D85F2AF19C15003D3BDB /* Products */,
 				A3DAB6A62AF7B62D00B3E1B2 /* Frameworks */,
 				56594AF51F184AD2DDFF9CA2 /* RubyTest.swift */,
+				4BF96A6B88BE61AB02474050 /* Users */,
 			);
 			sourceTree = "<group>";
 		};
@@ -274,6 +316,24 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BC193B1AEDD73BD61D79F962 /* FlightSearch */ = {
+			isa = PBXGroup;
+			children = (
+				517E8E4F6A1DB66DB5AA9EE1 /* Auth */,
+			);
+			name = FlightSearch;
+			path = FlightSearch;
+			sourceTree = "<group>";
+		};
+		E45FEA74BE5093B35E591626 /* Flightly */ = {
+			isa = PBXGroup;
+			children = (
+				BC193B1AEDD73BD61D79F962 /* FlightSearch */,
+			);
+			name = Flightly;
+			path = Flightly;
 			sourceTree = "<group>";
 		};
 		EE3C1AAD96FF775C26D54ACE /* Login */ = {
@@ -414,6 +474,8 @@
 				1BAFD471D45A835624290BEE /* LoginView.swift in Sources */,
 				E01CD7D5E8C8808203C21942 /* AuthenticationService.swift in Sources */,
 				1D329E5F19D987253146B6B0 /* AuthenticationService.swift in Sources */,
+				14580F354A1B38EE8F65D2A2 /* LoginView.swift in Sources */,
+				4BA415F8088D8ACABE59BF3D /* LoginViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

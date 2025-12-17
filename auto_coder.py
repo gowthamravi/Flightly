@@ -163,15 +163,19 @@ def add_file_to_xcode(file_path):
     """
     Adds a file to the Xcode project using the external Ruby script.
     """
-    if not os.path.exists("add_file.rb"):
-        print("⚠️ add_file.rb not found. Skipping Xcode registration.")
+    # Get absolute path of this script to find add_file.rb
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    ruby_script_path = os.path.join(script_dir, "add_file.rb")
+
+    if not os.path.exists(ruby_script_path):
+        print(f"⚠️ add_file.rb not found at {ruby_script_path}. CWD: {os.getcwd()}. Skipping Xcode registration.")
         return
 
     project_path = "FlightSearch.xcodeproj"
     target_name = "FlightSearch"
     
     # Use bundle exec to ensure gems are found
-    cmd = ["bundle", "exec", "ruby", "add_file.rb", project_path, file_path, target_name]
+    cmd = ["bundle", "exec", "ruby", ruby_script_path, project_path, file_path, target_name]
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True)

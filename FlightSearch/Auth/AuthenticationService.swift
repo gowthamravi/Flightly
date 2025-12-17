@@ -1,40 +1,36 @@
 import Foundation
 
-// Custom error enum for authentication failures
-enum AuthenticationError: Error, LocalizedError, Equatable {
-    case invalidCredentials
-    case networkError(String)
-    case unknown
+// Define a protocol for testability and dependency injection
+protocol AuthenticationServiceProtocol {
+    func login(email: String, password: String) async throws
+}
 
+enum AuthError: Error, LocalizedError {
+    case invalidCredentials
+    case networkError
+    
     var errorDescription: String? {
         switch self {
         case .invalidCredentials:
             return "Invalid email or password. Please try again."
-        case .networkError(let message):
-            return "A network error occurred: \(message)"
-        case .unknown:
-            return "An unknown error occurred. Please try again later."
+        case .networkError:
+            return "A network error occurred. Please check your connection."
         }
     }
 }
 
-// Protocol for dependency injection and testability
-protocol AuthenticationServiceProtocol {
-    func login(email: String, password: String) async -> Result<User, AuthenticationError>
-}
-
-// A mock service that simulates a real authentication backend
-class MockAuthenticationService: AuthenticationServiceProtocol {
-    func login(email: String, password: String) async -> Result<User, AuthenticationError> {
-        // Simulate network delay
-        try? await Task.sleep(for: .seconds(1))
-
-        // Mocked logic: accept a specific user/pass combination
-        if email.lowercased() == "test@example.com" && password == "password123" {
-            let user = User(id: UUID(), email: email, name: "Test User")
-            return .success(user)
+// Concrete implementation of the authentication service
+class AuthenticationService: AuthenticationServiceProtocol {
+    func login(email: String, password: String) async throws {
+        // Simulate a network request delay
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 second delay
+        
+        // Simple validation logic for demonstration purposes
+        if email.lowercased() == "test@example.com" && password == "password" {
+            // In a real application, you would handle session tokens, user data, etc.
+            return
         } else {
-            return .failure(.invalidCredentials)
+            throw AuthError.invalidCredentials
         }
     }
 }

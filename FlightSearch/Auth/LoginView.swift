@@ -1,132 +1,92 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel: LoginViewModel
-
-    // Default initializer uses the mock service. In a real app, you'd inject a live service.
-    init(viewModel: LoginViewModel = LoginViewModel(authService: MockAuthenticationService())) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @StateObject private var viewModel = LoginViewModel()
+    // This state would typically be managed by a higher-level coordinator or view router
+    @State private var didLoginSuccessfully = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(spacing: 16) {
-                    headerView
-                    
-                    emailField
-                    
-                    passwordField
-                    
-                    if let errorMessage = viewModel.errorMessage {
-                        errorTextView(message: errorMessage)
-                    }
-                    
-                    loginButton
-                    
-                    Spacer()
-                }
-                .padding()
-                .navigationTitle("Login")
-                .navigationBarTitleDisplayMode(.inline)
+        ZStack {
+            // Main content
+            VStack(spacing: 16) {
+                Spacer()
                 
-                // Loading overlay
-                if viewModel.isLoading {
-                    loadingOverlay
+                Text("FlightSearch")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .padding(.bottom, 30)
+                
+                VStack(spacing: 16) {
+                    TextField("Email", text: $viewModel.email)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                    
+                    SecureField("Password", text: $viewModel.password)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                }
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 4)
+                }
+                
+                Button(action: viewModel.login) {
+                    Text("Login")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(height: 50)
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
+                        .cornerRadius(10)
+                }
+                .disabled(viewModel.isLoginButtonDisabled)
+                .padding(.top, 10)
+                
+                Spacer()
+                Spacer()
+            }
+            .padding()
+            .onChange(of: viewModel.isAuthenticated) { isAuthenticated in
+                if isAuthenticated {
+                    // In a real app, a coordinator would handle this navigation.
+                    // Using a fullScreenCover for demonstration.
+                    self.didLoginSuccessfully = true
                 }
             }
-            // In a real app, this would be handled by a coordinator or root view
-            // to navigate to the main content after successful login.
-            .fullScreenCover(isPresented: $viewModel.isAuthenticated) {
+            .fullScreenCover(isPresented: $didLoginSuccessfully) {
+                // Placeholder for the main app view after successful login
                 Text("Welcome! You are logged in.")
             }
-        }
-    }
-    
-    // MARK: - Subviews
-    
-    private var headerView: some View {
-        Text("Welcome Back")
-            .font(.largeTitle)
-            .fontWeight(.bold)
-            .padding(.vertical, 20)
-    }
-    
-    private var emailField: some View {
-        TextField("Email", text: $viewModel.email)
-            .keyboardType(.emailAddress)
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
-            .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
-    }
-    
-    private var passwordField: some View {
-        SecureField("Password", text: $viewModel.password)
-            .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
-    }
-    
-    private func errorTextView(message: String) -> some View {
-        Text(message)
-            .font(.caption)
-            .foregroundColor(.red)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 4)
-    }
-    
-    private var loginButton: some View {
-        Button(action: viewModel.login) {
-            Text("Login")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(height: 50)
-                .frame(maxWidth: .infinity)
-                .background(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
-                .cornerRadius(10)
-        }
-        .disabled(viewModel.isLoginButtonDisabled)
-        .padding(.top, 10)
-    }
-    
-    private var loadingOverlay: some View {
-        Color.black.opacity(0.4)
-            .ignoresSafeArea()
-            .overlay {
-                ProgressView("Logging In...")
-                    .padding()
-                    .background(.thinMaterial)
-                    .cornerRadius(10)
-                    .tint(.primary)
+
+            // Loading overlay
+            if viewModel.isLoading {
+                Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
             }
+        }
     }
 }
 
-// MARK: - Previews
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        // Standard preview
         LoginView()
-            .previewDisplayName("Default")
-
-        // Preview with an error message
-        static var errorViewModel: LoginViewModel {
-            let vm = LoginViewModel(authService: MockAuthenticationService())
-            vm.errorMessage = "Invalid email or password."
-            return vm
-        }
-        LoginView(viewModel: errorViewModel)
-            .previewDisplayName("Error State")
-
-        // Preview in loading state
-        static var loadingViewModel: LoginViewModel {
-            let vm = LoginViewModel(authService: MockAuthenticationService())
-            vm.isLoading = true
-            return vm
-        }
-        LoginView(viewModel: loadingViewModel)
-            .previewDisplayName("Loading State")
     }
 }

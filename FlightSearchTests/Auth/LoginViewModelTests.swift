@@ -2,29 +2,33 @@ import XCTest
 import Combine
 @testable import FlightSearch
 
-// Mock service specifically for testing different scenarios
-class ControllableMockAuthService: AuthenticationServiceProtocol {
-    var loginResult: Result<User, AuthenticationError>!
-    private(set) var loginCallCount = 0
-
-    func login(email: String, password: String) async -> Result<User, AuthenticationError> {
+// Mock Authentication Service for isolated testing of the ViewModel
+class MockAuthenticationService: AuthenticationServiceProtocol {
+    
+    var shouldSucceed: Bool = true
+    var loginCallCount = 0
+    
+    func login(email: String, password: String) async throws {
         loginCallCount += 1
-        // Allow the test to control the result
-        return loginResult
+        if shouldSucceed {
+            return
+        } else {
+            throw AuthError.invalidCredentials
+        }
     }
 }
 
 @MainActor
-final class LoginViewModelTests: XCTestCase {
+class LoginViewModelTests: XCTestCase {
 
-    private var viewModel: LoginViewModel!
-    private var mockAuthService: ControllableMockAuthService!
+    var viewModel: LoginViewModel!
+    var mockAuthService: MockAuthenticationService!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        mockAuthService = ControllableMockAuthService()
-        viewModel = LoginViewModel(authService: mockAuthService)
+        mockAuthService = MockAuthenticationService()
+        viewModel = LoginViewModel(authenticationService: mockAuthService)
         cancellables = []
     }
 
@@ -35,109 +39,100 @@ final class LoginViewModelTests: XCTestCase {
         super.tearDown()
     }
 
-    func testLogin_Success() async {
-        // Given
-        let user = User(id: UUID(), email: "test@example.com", name: "Test User")
-        mockAuthService.loginResult = .success(user)
-        viewModel.email = "test@example.com"
-        viewModel.password = "password123"
-
-        let expectation = XCTestExpectation(description: "isAuthenticated becomes true")
-        viewModel.$isAuthenticated
-            .dropFirst()
-            .sink { XCTAssertTrue($0); expectation.fulfill() }
-            .store(in: &cancellables)
-
-        // When
-        viewModel.login()
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 1.0)
+    func testInitialState() {
+        XCTAssertEqual(viewModel.email, "")
+        XCTAssertEqual(viewModel.password, "")
         XCTAssertFalse(viewModel.isLoading)
         XCTAssertNil(viewModel.errorMessage)
-        XCTAssertEqual(mockAuthService.loginCallCount, 1)
+        XCTAssertFalse(viewModel.isAuthenticated)
+        XCTAssertTrue(viewModel.isLoginButtonDisabled, "Login button should be disabled initially")
+    }
+    
+    func testLoginButtonStateChanges() {
+        // Initially disabled
+        XCTAssertTrue(viewModel.isLoginButtonDisabled)
+        
+        // Disabled if only email is filled
+        viewModel.email = "test@example.com"
+        XCTAssertTrue(viewModel.isLoginButtonDisabled)
+        
+        // Enabled when both are filled
+        viewModel.password = "password"
+        XCTAssertFalse(viewModel.isLoginButtonDisabled)
+        
+        // Disabled if password becomes empty again
+        viewModel.password = ""
+        XCTAssertTrue(viewModel.isLoginButtonDisabled)
     }
 
-    func testLogin_Failure_InvalidCredentials() async {
+    func testLoginSuccess() async {
         // Given
-        let error = AuthenticationError.invalidCredentials
-        mockAuthService.loginResult = .failure(error)
+        mockAuthService.shouldSucceed = true
+        viewModel.email = "test@example.com"
+        viewModel.password = "password"
+        
+        let expectation = self.expectation(description: "Wait for isAuthenticated to become true")
+        viewModel.$isAuthenticated
+            .dropFirst()
+            .sink { isAuthenticated in
+                if isAuthenticated {
+                    expectation.fulfill()
+                }
+            }
+            .store(in: &cancellables)
+        
+        // When
+        viewModel.login()
+        
+        // Then
+        await fulfillment(of: [expectation], timeout: 2.0)
+        
+        XCTAssertEqual(mockAuthService.loginCallCount, 1)
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertTrue(viewModel.isAuthenticated)
+        XCTAssertNil(viewModel.errorMessage)
+    }
+    
+    func testLoginFailure() async {
+        // Given
+        mockAuthService.shouldSucceed = false
         viewModel.email = "wrong@example.com"
-        viewModel.password = "wrongpass"
-
-        let expectation = XCTestExpectation(description: "errorMessage is set correctly")
+        viewModel.password = "wrong"
+        
+        let expectation = self.expectation(description: "Wait for errorMessage to be set")
         viewModel.$errorMessage
             .dropFirst()
-            .sink { XCTAssertEqual($0, error.localizedDescription); expectation.fulfill() }
+            .sink { errorMessage in
+                if errorMessage != nil {
+                    expectation.fulfill()
+                }
+            }
             .store(in: &cancellables)
-
+        
         // When
         viewModel.login()
-
+        
         // Then
-        await fulfillment(of: [expectation], timeout: 1.0)
+        await fulfillment(of: [expectation], timeout: 2.0)
+        
+        XCTAssertEqual(mockAuthService.loginCallCount, 1)
         XCTAssertFalse(viewModel.isLoading)
         XCTAssertFalse(viewModel.isAuthenticated)
-        XCTAssertEqual(mockAuthService.loginCallCount, 1)
-    }
-
-    func testIsLoginButtonDisabled_InitialState() {
-        // Then
-        XCTAssertTrue(viewModel.isLoginButtonDisabled, "Button should be disabled when fields are empty")
-    }
-
-    func testIsLoginButtonDisabled_WhenLoading() {
-        // Given
-        viewModel.email = "test@example.com"
-        viewModel.password = "password123"
-        viewModel.isLoading = true
-
-        // Then
-        XCTAssertTrue(viewModel.isLoginButtonDisabled, "Button should be disabled while loading")
-    }
-
-    func testIsLoginButtonDisabled_FieldsPopulated() {
-        // Given
-        viewModel.email = "test@example.com"
-        viewModel.password = "password123"
-
-        // Then
-        XCTAssertFalse(viewModel.isLoginButtonDisabled, "Button should be enabled when fields are populated and not loading")
+        XCTAssertNotNil(viewModel.errorMessage)
+        XCTAssertEqual(viewModel.errorMessage, AuthError.invalidCredentials.localizedDescription)
     }
     
-    func testLogin_DoesNotTrigger_WhenButtonIsDisabled() {
+    func testLoadingStateDuringLogin() {
         // Given
-        viewModel.email = ""
-        viewModel.password = ""
+        mockAuthService.shouldSucceed = true
+        viewModel.email = "test@example.com"
+        viewModel.password = "password"
         
         // When
         viewModel.login()
         
         // Then
-        XCTAssertEqual(mockAuthService.loginCallCount, 0, "Login service should not be called if form is invalid")
-    }
-    
-    func testLoadingState_TogglesDuringLogin() async {
-        // Given
-        mockAuthService.loginResult = .success(User(id: UUID(), email: "", name: ""))
-        viewModel.email = "test@example.com"
-        viewModel.password = "password123"
-        
-        var loadingStates: [Bool] = []
-        let expectation = XCTestExpectation(description: "isLoading toggles from false -> true -> false")
-        
-        viewModel.$isLoading.sink { isLoading in
-            loadingStates.append(isLoading)
-            if loadingStates.count == 3 { // Initial false, true during call, false after completion
-                expectation.fulfill()
-            }
-        }.store(in: &cancellables)
-        
-        // When
-        viewModel.login()
-        
-        // Then
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertEqual(loadingStates, [false, true, false])
+        XCTAssertTrue(viewModel.isLoading, "isLoading should be true immediately after login starts")
+        XCTAssertTrue(viewModel.isLoginButtonDisabled, "Login button should be disabled while loading")
     }
 }

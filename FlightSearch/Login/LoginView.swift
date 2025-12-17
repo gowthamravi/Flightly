@@ -1,117 +1,99 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel: LoginViewModel
-    @State private var loginSuccessful: Bool = false
-
-    init(viewModel: LoginViewModel = LoginViewModel()) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @StateObject private var viewModel = LoginViewModel()
+    @State private var navigateToMainApp = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
                 Spacer()
-
+                
                 Image(systemName: "airplane.circle.fill")
                     .font(.system(size: 80))
-                    .foregroundColor(BrandColor.primary)
-
-                Text("Flightly")
+                    .foregroundColor(.blue)
+                
+                Text("Welcome Back")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                VStack(spacing: 16) {
+                Text("Log in to continue your flight search")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+
+                VStack(spacing: 15) {
                     TextField("Email", text: $viewModel.email)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
+                        .disableAutocorrection(true)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
 
                     SecureField("Password", text: $viewModel.password)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
                 }
+                .padding(.horizontal)
 
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
+                        .padding(.horizontal)
                 }
 
-                loginButton
-
-                Button("Forgot Password?") {
-                    // Handle forgot password action
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                } else {
+                    Button(action: {
+                        viewModel.login()
+                    }) {
+                        Text("Login")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .padding(.horizontal)
                 }
-                .font(.subheadline)
-                .foregroundColor(BrandColor.primary)
 
                 Spacer()
+                Spacer()
 
-                guestAndSignUpFooter
+                HStack {
+                    Text("Don't have an account?")
+                    Button("Register") {
+                        // Handle navigation to registration
+                    }
+                }
+                .font(.footnote)
             }
             .padding()
-            .navigationDestination(isPresented: $loginSuccessful) {
-                // Navigate to the main app view upon successful login
-                MainView()
-            }
-            .onChange(of: viewModel.loginSuccessful) {
-                if viewModel.loginSuccessful {
-                    loginSuccessful = true
+            .navigationBarHidden(true)
+            .onChange(of: viewModel.isAuthenticated) { isAuthenticated in
+                if isAuthenticated {
+                    navigateToMainApp = true
                 }
             }
-        }
-    }
-
-    private var loginButton: some View {
-        Button(action: {
-            Task {
-                await viewModel.login()
+            .navigationDestination(isPresented: $navigateToMainApp) {
+                // Navigate to the main content view upon successful login
+                ContentView()
             }
-        }) {
-            HStack {
-                if viewModel.isLoggingIn {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                } else {
-                    Text("Login")
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .foregroundColor(.white)
-            .background(BrandColor.primary)
-            .cornerRadius(10)
-        }
-        .disabled(viewModel.isLoginDisabled)
-        .opacity(viewModel.isLoginDisabled ? 0.6 : 1.0)
-    }
-
-    private var guestAndSignUpFooter: some View {
-        VStack(spacing: 15) {
-            NavigationLink(destination: GuestView()) {
-                 Text("Continue as Guest")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .foregroundColor(BrandColor.primary)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(BrandColor.primary, lineWidth: 1)
-                    )
-            }
-
-            HStack {
-                Text("Don't have an account?")
-                Button("Sign Up") {
-                    // Handle sign up navigation
-                }
-                .foregroundColor(BrandColor.primary)
-                .fontWeight(.semibold)
-            }
-            .font(.subheadline)
         }
     }
 }

@@ -1,85 +1,100 @@
 import XCTest
-@testable import FlightSearch
+@testable import FlightSearch // Replace with your actual project name
 
-// Mock Authentication Service for testing
+// Mock Authentication Service for testing the ViewModel in isolation.
 class MockAuthenticationService: AuthenticationServiceProtocol {
-    var shouldSucceed: Bool
-    var loginCalled = false
+    var loginResult: Result<User, AuthError>!
 
-    init(shouldSucceed: Bool) {
-        self.shouldSucceed = shouldSucceed
-    }
-
-    func login(email: String, password: String) async throws {
-        loginCalled = true
-        if shouldSucceed {
-            return
-        } else {
-            throw AuthError.invalidCredentials
-        }
+    func login(email: String, password: String) async -> Result<User, AuthError> {
+        // Simulate a delay to allow isLoading state to be tested
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        return loginResult
     }
 }
 
 @MainActor
-final class LoginViewModelTests: XCTestCase {
+class LoginViewModelTests: XCTestCase {
 
-    func test_initialState_isCorrect() {
-        let viewModel = LoginViewModel()
+    var viewModel: LoginViewModel!
+    var mockAuthService: MockAuthenticationService!
+
+    override func setUp() {
+        super.setUp()
+        mockAuthService = MockAuthenticationService()
+        viewModel = LoginViewModel(authenticationService: mockAuthService)
+    }
+
+    override func tearDown() {
+        viewModel = nil
+        mockAuthService = nil
+        super.tearDown()
+    }
+
+    func testInitialState() {
         XCTAssertEqual(viewModel.email, "")
         XCTAssertEqual(viewModel.password, "")
-        XCTAssertFalse(viewModel.isLoggingIn)
+        XCTAssertFalse(viewModel.isLoading)
         XCTAssertNil(viewModel.errorMessage)
-        XCTAssertFalse(viewModel.loginSuccessful)
-        XCTAssertTrue(viewModel.isLoginDisabled, "Login button should be disabled initially")
+        XCTAssertFalse(viewModel.isAuthenticated)
     }
 
-    func test_isLoginDisabled_whenFieldsArePopulated() {
-        let viewModel = LoginViewModel()
-        viewModel.email = "test@test.com"
-        viewModel.password = "password"
-        XCTAssertFalse(viewModel.isLoginDisabled, "Login button should be enabled when fields are populated")
-    }
+    func testLogin_WithEmptyCredentials_ShowsError() {
+        viewModel.email = ""
+        viewModel.password = ""
 
-    func test_isLoginDisabled_whenLoggingIn() {
-        let viewModel = LoginViewModel()
-        viewModel.email = "test@test.com"
-        viewModel.password = "password"
-        viewModel.isLoggingIn = true
-        XCTAssertTrue(viewModel.isLoginDisabled, "Login button should be disabled while logging in")
-    }
+        viewModel.login()
 
-    func test_login_succeeds() async {
-        // Given
-        let mockAuthService = MockAuthenticationService(shouldSucceed: true)
-        let viewModel = LoginViewModel(authService: mockAuthService)
-        viewModel.email = "test@flightly.com"
+        XCTAssertEqual(viewModel.errorMessage, "Email and password cannot be empty.")
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertFalse(viewModel.isAuthenticated)
+    }
+    
+    func testLogin_WithInvalidEmailFormat_ShowsError() {
+        viewModel.email = "invalid-email"
         viewModel.password = "password123"
 
-        // When
-        await viewModel.login()
+        viewModel.login()
 
-        // Then
-        XCTAssertTrue(mockAuthService.loginCalled)
-        XCTAssertFalse(viewModel.isLoggingIn, "isLoggingIn should be false after request completes")
-        XCTAssertTrue(viewModel.loginSuccessful, "loginSuccessful should be true on success")
-        XCTAssertNil(viewModel.errorMessage, "errorMessage should be nil on success")
+        XCTAssertEqual(viewModel.errorMessage, "Please enter a valid email address.")
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertFalse(viewModel.isAuthenticated)
     }
 
-    func test_login_fails_withInvalidCredentials() async {
-        // Given
-        let mockAuthService = MockAuthenticationService(shouldSucceed: false)
-        let viewModel = LoginViewModel(authService: mockAuthService)
-        viewModel.email = "wrong@email.com"
+    func testLogin_Successful() async {
+        let user = User(id: UUID(), email: "test@example.com", name: "Test User")
+        mockAuthService.loginResult = .success(user)
+        viewModel.email = "test@example.com"
+        viewModel.password = "password123"
+
+        viewModel.login()
+        
+        // Check loading state immediately
+        XCTAssertTrue(viewModel.isLoading)
+        XCTAssertNil(viewModel.errorMessage)
+        
+        // Wait for the async login task to complete
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 200_000_000) // Wait for mock service delay
+
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertTrue(viewModel.isAuthenticated)
+        XCTAssertNil(viewModel.errorMessage)
+    }
+
+    func testLogin_Failed_InvalidCredentials() async {
+        mockAuthService.loginResult = .failure(.invalidCredentials)
+        viewModel.email = "wrong@example.com"
         viewModel.password = "wrongpassword"
 
-        // When
-        await viewModel.login()
+        viewModel.login()
+        
+        XCTAssertTrue(viewModel.isLoading)
+        
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 200_000_000)
 
-        // Then
-        XCTAssertTrue(mockAuthService.loginCalled)
-        XCTAssertFalse(viewModel.isLoggingIn, "isLoggingIn should be false after request completes")
-        XCTAssertFalse(viewModel.loginSuccessful, "loginSuccessful should be false on failure")
-        XCTAssertNotNil(viewModel.errorMessage, "errorMessage should be populated on failure")
-        XCTAssertEqual(viewModel.errorMessage, AuthError.invalidCredentials.description)
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertFalse(viewModel.isAuthenticated)
+        XCTAssertEqual(viewModel.errorMessage, "Invalid email or password. Please try again.")
     }
 }

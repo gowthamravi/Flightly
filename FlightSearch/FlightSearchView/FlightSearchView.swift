@@ -1,58 +1,54 @@
-//
-//  FlightSearchView.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 03/11/2023.
-//
-
 import SwiftUI
-import ServiceHandler
-import ActivityIndicatorView
 
 struct FlightSearchView: View {
-    @EnvironmentObject private var flight: FlightSearch
-    @EnvironmentObject private var router: Router
-    @State private var showLoadingIndicator: Bool = false
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            
-            VStack(alignment: .leading) {
-                Text("Let's")
-                    .font(.title2)
-                    .frame(alignment: .leading)
-                Text("Explore")
-                    .font(.title)
-                    .frame(alignment: .leading)
-            } .frame(maxWidth: .infinity, alignment: .topLeading)
-            VStack(alignment: .leading, spacing: 20) {
+    @State private var departure: String = ""
+    @State private var destination: String = ""
+    @State private var travelDate: Date = Date()
+    @State private var passengerCount: Int = 1
 
-                StationView(stationType: .origin)
-                StationView(stationType: .destination)
-                
-                DateView()
-                    .environmentObject(flight)
-                PassengerView()
-                    .environmentObject(flight)
-                
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                TextField("Departure", text: $departure)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+
+                TextField("Destination", text: $destination)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+
+                DatePicker("Travel Date", selection: $travelDate, displayedComponents: .date)
+                    .datePickerStyle(GraphicalDatePickerStyle())
+                    .padding()
+
+                Stepper(value: $passengerCount, in: 1...10) {
+                    Text("Passengers: \(passengerCount)")
+                }
+                .padding()
+
+                Button(action: {
+                    print("Search Flights")
+                }) {
+                    Text("Search Flights")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding()
+
                 Spacer()
-                
-                LetsGoView(showLoadingIndicator: $showLoadingIndicator)
             }
-            if showLoadingIndicator {
-                ActivityIndicatorView(isVisible: $showLoadingIndicator, type: .default())
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.red)
-            }
+            .navigationTitle("Flight Search")
+            .padding()
         }
-        .navigationTitle("Flight Search")
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
     }
 }
 
-#Preview {
-    FlightSearchView()
-        .environmentObject(FlightSearch(service: FlightSearchingService(service: NetworkService())))
-        .environmentObject(Router.shared)
+struct FlightSearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlightSearchView()
+    }
 }

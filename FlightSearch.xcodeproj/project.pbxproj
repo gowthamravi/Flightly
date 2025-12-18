@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		134EBE708D60C63007A6B25F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812C2838075DB4856FAB93E3 /* AuthService.swift */; };
 		178574131456B72E17BA6D36 /* FlightSearchViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3227006BB11243CEA52AE8 /* FlightSearchViewTests.swift */; };
+		324B5EDC68119395155CB6B6 /* FlightSearchViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C63BF3D98723B2FEEF9F95 /* FlightSearchViewTests.swift */; };
 		46FFD5BF2EF3090E00A453BE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */; };
 		46FFD5C02EF3090E00A453BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B628A789F96C70A1CB76B348 /* LoginView.swift */; };
 		46FFD5C12EF3093000A453BE /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */; };
@@ -70,6 +71,7 @@
 		5B3227006BB11243CEA52AE8 /* FlightSearchViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightSearchViewTests.swift; sourceTree = "<group>"; };
 		812C2838075DB4856FAB93E3 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		84C63BF3D98723B2FEEF9F95 /* FlightSearchViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightSearchViewTests.swift; sourceTree = "<group>"; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
 		A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsListView.swift; sourceTree = "<group>"; };
 		A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFlightView.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				868A984CC4DD7E9DEE8BF8DA /* FlightSearchView */,
+				84C63BF3D98723B2FEEF9F95 /* FlightSearchViewTests.swift */,
 			);
 			name = FlightSearchTests;
 			path = FlightSearchTests;
@@ -440,6 +443,7 @@
 				53799B1F3E0963041F76160F /* PassengersModel.swift in Sources */,
 				95F962799A91800261075064 /* PassengerPickerView.swift in Sources */,
 				7F1E1E2A67B33324C782FD42 /* DatePickerView.swift in Sources */,
+				324B5EDC68119395155CB6B6 /* FlightSearchViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

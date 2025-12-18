@@ -1,317 +1,291 @@
 import SwiftUI
 
 struct FlightSearchView: View {
-    @EnvironmentObject private var flight: FlightSearch
+    @State private var fromStation: Station?
+    @State private var toStation: Station?
     @State private var departureDate = Date()
     @State private var returnDate = Date().addingTimeInterval(86400)
     @State private var passengers = Passengers()
-    @State private var isOneWay = false
+    @State private var isRoundTrip = false
     @State private var showingStationPicker = false
-    @State private var stationType: StationType = .origin
+    @State private var stationPickerType: StationPickerType = .from
     @State private var showingPassengerPicker = false
     @State private var showingDatePicker = false
-    @State private var isSelectingDepartureDate = true
+    @State private var datePickerType: DatePickerType = .departure
+    
+    enum StationPickerType {
+        case from, to
+    }
+    
+    enum DatePickerType {
+        case departure, return
+    }
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    headerSection
-                    
-                    VStack(spacing: 16) {
-                        tripTypeSelector
-                        stationSelectionCard
-                        dateSelectionCard
-                        passengerSelectionCard
-                        searchButton
-                    }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.top, 20)
-            }
-            .background(Color(.systemGroupedBackground))
-            .navigationBarHidden(true)
-        }
-        .sheet(isPresented: $showingStationPicker) {
-            StationListView(isPresented: $showingStationPicker, stationType: stationType)
-                .environmentObject(flight)
-        }
-        .sheet(isPresented: $showingPassengerPicker) {
-            PassengerPickerView(passengers: $passengers, isPresented: $showingPassengerPicker)
-        }
-    }
-    
-    private var headerSection: some View {
-        VStack(spacing: 8) {
-            Text("Book Your Flight")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundColor(.primary)
-            
-            Text("Find the best deals for your journey")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.secondary)
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    private var tripTypeSelector: some View {
-        HStack(spacing: 0) {
-            tripTypeButton(title: "Round Trip", isSelected: !isOneWay) {
-                isOneWay = false
-            }
-            
-            tripTypeButton(title: "One Way", isSelected: isOneWay) {
-                isOneWay = true
-            }
-        }
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-        .padding(.horizontal, 4)
-    }
-    
-    private func tripTypeButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(isSelected ? .white : .primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isSelected ? Color.blue : Color.clear)
-                )
-        }
-        .animation(.easeInOut(duration: 0.2), value: isSelected)
-    }
-    
-    private var stationSelectionCard: some View {
-        VStack(spacing: 0) {
-            // From Station
-            stationRow(
-                title: "From",
-                station: flight.origin,
-                placeholder: "Select departure city"
-            ) {
-                stationType = .origin
-                showingStationPicker = true
-            }
-            
-            Divider()
-                .padding(.horizontal, 16)
-            
-            // Swap Button
-            HStack {
-                Spacer()
-                Button(action: swapStations) {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.blue)
-                        .frame(width: 40, height: 40)
-                        .background(Color(.systemGray6))
-                        .clipShape(Circle())
-                }
-                .offset(y: -8)
-                Spacer()
-            }
-            .zIndex(1)
-            
-            // To Station
-            stationRow(
-                title: "To",
-                station: flight.destination,
-                placeholder: "Select destination city"
-            ) {
-                stationType = .destination
-                showingStationPicker = true
-            }
-            .offset(y: -16)
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-        )
-    }
-    
-    private func stationRow(title: String, station: Station?, placeholder: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
-                    if let station = station {
-                        Text(station.name)
-                            .font(.system(size: 18, weight: .semibold))
+                    // Header
+                    VStack(spacing: 8) {
+                        Text("Where would you like to go?")
+                            .font(.title2)
+                            .fontWeight(.semibold)
                             .foregroundColor(.primary)
                         
-                        Text(station.code)
-                            .font(.system(size: 14, weight: .medium))
+                        Text("Find the best flights for your next adventure")
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
-                    } else {
-                        Text(placeholder)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                     }
+                    .padding(.top, 20)
+                    
+                    // Trip Type Selector
+                    VStack(spacing: 16) {
+                        HStack(spacing: 0) {
+                            Button(action: { isRoundTrip = false }) {
+                                Text("One Way")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(isRoundTrip ? .secondary : .white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(isRoundTrip ? Color.clear : Color.blue)
+                                    )
+                            }
+                            
+                            Button(action: { isRoundTrip = true }) {
+                                Text("Round Trip")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(isRoundTrip ? .white : .secondary)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(isRoundTrip ? Color.blue : Color.clear)
+                                    )
+                            }
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(.systemGray6))
+                        )
+                        .padding(.horizontal, 4)
+                    }
+                    
+                    // Flight Search Form
+                    VStack(spacing: 16) {
+                        // From/To Stations
+                        VStack(spacing: 12) {
+                            // From Station
+                            Button(action: {
+                                stationPickerType = .from
+                                showingStationPicker = true
+                            }) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("From")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(fromStation?.name ?? "Select departure city")
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundColor(.primary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "airplane.departure")
+                                        .foregroundColor(.blue)
+                                }
+                                .padding(16)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemBackground))
+                                        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color(.systemGray5), lineWidth: 1)
+                                )
+                            }
+                            
+                            // Swap Button
+                            Button(action: swapStations) {
+                                Image(systemName: "arrow.up.arrow.down")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 32, height: 32)
+                                    .background(Circle().fill(Color(.systemGray6)))
+                            }
+                            
+                            // To Station
+                            Button(action: {
+                                stationPickerType = .to
+                                showingStationPicker = true
+                            }) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("To")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(toStation?.name ?? "Select destination city")
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundColor(.primary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "airplane.arrival")
+                                        .foregroundColor(.blue)
+                                }
+                                .padding(16)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemBackground))
+                                        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color(.systemGray5), lineWidth: 1)
+                                )
+                            }
+                        }
+                        
+                        // Date Selection
+                        HStack(spacing: 12) {
+                            // Departure Date
+                            Button(action: {
+                                datePickerType = .departure
+                                showingDatePicker = true
+                            }) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Departure")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(departureDate.formatted(date: .abbreviated, time: .omitted))
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.primary)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemBackground))
+                                        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color(.systemGray5), lineWidth: 1)
+                                )
+                            }
+                            
+                            // Return Date (if round trip)
+                            if isRoundTrip {
+                                Button(action: {
+                                    datePickerType = .return
+                                    showingDatePicker = true
+                                }) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Return")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(returnDate.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundColor(.primary)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(16)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(.systemBackground))
+                                            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color(.systemGray5), lineWidth: 1)
+                                    )
+                                }
+                            }
+                        }
+                        
+                        // Passengers
+                        Button(action: {
+                            showingPassengerPicker = true
+                        }) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Passengers")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text("\(passengers.totalCount) Passenger\(passengers.totalCount == 1 ? "" : "s")")
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.primary)
+                                }
+                                Spacer()
+                                Image(systemName: "person.2")
+                                    .foregroundColor(.blue)
+                            }
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemBackground))
+                                    .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(.systemGray5), lineWidth: 1)
+                            )
+                        }
+                    }
+                    
+                    // Search Button
+                    NavigationLink(destination: FlightsListView()) {
+                        Text("Search Flights")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [Color.blue, Color.blue.opacity(0.8)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                            )
+                            .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 2)
+                    }
+                    .disabled(!isSearchEnabled)
+                    .opacity(isSearchEnabled ? 1.0 : 0.6)
+                    
+                    Spacer(minLength: 20)
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.secondary)
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Flight Search")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private var dateSelectionCard: some View {
-        VStack(spacing: 0) {
-            // Departure Date
-            dateRow(
-                title: "Departure",
-                date: departureDate
-            ) {
-                isSelectingDepartureDate = true
-                showingDatePicker = true
-            }
-            
-            if !isOneWay {
-                Divider()
-                    .padding(.horizontal, 16)
-                
-                // Return Date
-                dateRow(
-                    title: "Return",
-                    date: returnDate
-                ) {
-                    isSelectingDepartureDate = false
-                    showingDatePicker = true
-                }
-            }
+        .sheet(isPresented: $showingStationPicker) {
+            StationListView(selectedStation: stationPickerType == .from ? $fromStation : $toStation)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-        )
+        .sheet(isPresented: $showingPassengerPicker) {
+            PassengerView(passengers: $passengers)
+        }
         .sheet(isPresented: $showingDatePicker) {
             DatePickerView(
-                selectedDate: isSelectingDepartureDate ? $departureDate : $returnDate,
+                selectedDate: datePickerType == .departure ? $departureDate : $returnDate,
                 isPresented: $showingDatePicker,
-                title: isSelectingDepartureDate ? "Select Departure Date" : "Select Return Date"
+                title: datePickerType == .departure ? "Select Departure Date" : "Select Return Date"
             )
         }
-    }
-    
-    private func dateRow(title: String, date: Date, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
-                    Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
-                    
-                    Text(date.formatted(.dateTime.weekday(.wide)))
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "calendar")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.blue)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-    
-    private var passengerSelectionCard: some View {
-        Button(action: {
-            showingPassengerPicker = true
-        }) {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Passengers")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
-                    Text("\(passengers.totalCount) Passenger\(passengers.totalCount == 1 ? "" : "s")")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
-                    
-                    Text(passengers.description)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "person.2")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.blue)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-        )
-    }
-    
-    private var searchButton: some View {
-        Button(action: searchFlights) {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 18, weight: .semibold))
-                
-                Text("Search Flights")
-                    .font(.system(size: 18, weight: .semibold))
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.blue, Color.blue.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-            )
-        }
-        .disabled(!isSearchEnabled)
-        .opacity(isSearchEnabled ? 1.0 : 0.6)
-        .padding(.top, 8)
     }
     
     private var isSearchEnabled: Bool {
-        flight.origin != nil && flight.destination != nil
+        fromStation != nil && toStation != nil
     }
     
     private func swapStations() {
-        let temp = flight.origin
-        flight.origin = flight.destination
-        flight.destination = temp
-    }
-    
-    private func searchFlights() {
-        // Implement flight search logic
-        print("Searching flights from \(flight.origin?.name ?? "") to \(flight.destination?.name ?? "")")
+        let temp = fromStation
+        fromStation = toStation
+        toStation = temp
     }
 }

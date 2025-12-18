@@ -11,7 +11,9 @@
 		46FFD5BF2EF3090E00A453BE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */; };
 		46FFD5C02EF3090E00A453BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B628A789F96C70A1CB76B348 /* LoginView.swift */; };
 		46FFD5C12EF3093000A453BE /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */; };
+		4A7D1DFD39C0A3013D28DE06 /* FlightlyButtonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F8A8E9BAC9990F90AEFE06 /* FlightlyButtonTests.swift */; };
 		56A7EDE454826ADFF79417FE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DE787DEAD140B6413B4318 /* User.swift */; };
+		9C1614EA3C3F74A27BFCB1D9 /* FlightlyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9B6302473361CFAECF5E97 /* FlightlyButton.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
 		A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */; };
@@ -62,6 +64,8 @@
 
 /* Begin PBXFileReference section */
 		53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		59F8A8E9BAC9990F90AEFE06 /* FlightlyButtonTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightlyButtonTests.swift; sourceTree = "<group>"; };
+		6B9B6302473361CFAECF5E97 /* FlightlyButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightlyButton.swift; sourceTree = "<group>"; };
 		812C2838075DB4856FAB93E3 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
@@ -139,6 +143,15 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
+		8FAB6D52E8C2A663247821E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				59F8A8E9BAC9990F90AEFE06 /* FlightlyButtonTests.swift */,
+			);
+			name = Components;
+			path = Components;
+			sourceTree = "<group>";
+		};
 		A341ACA12AF7B9C400CF69E5 /* Flights */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +169,7 @@
 				A378D8602AF19C15003D3BDB /* FlightSearch */,
 				A378D85F2AF19C15003D3BDB /* Products */,
 				A3DAB6A62AF7B62D00B3E1B2 /* Frameworks */,
+				DB389D204BEF7C99086CBF77 /* FlightSearchTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -184,6 +198,7 @@
 				EDB4F73F2B76A8090092D19B /* airport.json */,
 				A378D8672AF19C16003D3BDB /* Preview Content */,
 				0D8004D433F1E642A972F6CF /* Auth */,
+				B933C5CA8DAB955903A5880F /* Components */,
 			);
 			path = FlightSearch;
 			sourceTree = "<group>";
@@ -276,6 +291,24 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B933C5CA8DAB955903A5880F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				6B9B6302473361CFAECF5E97 /* FlightlyButton.swift */,
+			);
+			name = Components;
+			path = Components;
+			sourceTree = "<group>";
+		};
+		DB389D204BEF7C99086CBF77 /* FlightSearchTests */ = {
+			isa = PBXGroup;
+			children = (
+				8FAB6D52E8C2A663247821E9 /* Components */,
+			);
+			name = FlightSearchTests;
+			path = FlightSearchTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,6 +439,8 @@
 				56A7EDE454826ADFF79417FE /* User.swift in Sources */,
 				CAA7F7664AC817C261AA97A9 /* AuthViewModel.swift in Sources */,
 				134EBE708D60C63007A6B25F /* AuthService.swift in Sources */,
+				9C1614EA3C3F74A27BFCB1D9 /* FlightlyButton.swift in Sources */,
+				4A7D1DFD39C0A3013D28DE06 /* FlightlyButtonTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

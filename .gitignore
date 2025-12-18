@@ -12,3 +12,4 @@ xcuserdata/
 .bundle/
 vendor/
 .env
+__pycache__/

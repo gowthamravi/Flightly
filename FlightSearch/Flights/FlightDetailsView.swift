@@ -5,36 +5,26 @@ struct FlightDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header Section
-                    headerSection
-                    
-                    // Flight Route Section
-                    flightRouteSection
-                    
-                    // Flight Information Section
-                    flightInfoSection
-                    
-                    // Fare Details Section
-                    fareDetailsSection
-                    
-                    Spacer(minLength: 100)
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 20)
+        ScrollView {
+            VStack(spacing: 24) {
+                // Header Section
+                headerSection
+                
+                // Flight Route Section
+                flightRouteSection
+                
+                // Flight Information Section
+                flightInfoSection
+                
+                // Fare Details Section
+                fareDetailsSection
+                
+                Spacer(minLength: 100)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .foregroundColor(.blue)
-                }
-            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     private var headerSection: some View {

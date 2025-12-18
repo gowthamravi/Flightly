@@ -36,8 +36,4 @@ extension Button {
     func flightlyStyle() -> some View {
         self.modifier(FlightlyButton())
     }
-    
-    func buttonStyle<S: ButtonStyle>(_ style: S) -> some View {
-        self.buttonStyle(style)
-    }
 }

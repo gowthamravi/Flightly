@@ -2,7 +2,7 @@ import XCTest
 import SwiftUI
 @testable import FlightSearch
 
-class FlightSearchViewTests: XCTestCase {
+class FlightSearchViewTestsRenamed: XCTestCase {
     
     func testInitialState() {
         // Test that the view initializes with correct default values

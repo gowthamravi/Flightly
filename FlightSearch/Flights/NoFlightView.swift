@@ -1,28 +1,18 @@
-//
-//  NoFlightView.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 05/11/2023.
-//
-
 import SwiftUI
 
 struct NoFlightView: View {
-    @Binding var isPresented: Bool
-
     var body: some View {
-        ContentUnavailableView(label: {
-            Label("Oops!", systemImage: "airplane.arrival")
-        }, description: {
-            Text("No Flights for the selected date. \n Please select a different Date")
-        }, actions: {
-            Button {
-                isPresented.toggle()
-            } label: {
-                Text("Go back")
-                    .customBoarderStyle()
-            }
-        })
-        .navigationBarBackButtonHidden(true)
+        ContentUnavailableView {
+            Label("No Flights Found", systemImage: "airplane.circle")
+        } description: {
+            Text("There are no available flights for the selected route and date. Please try changing your search criteria.")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct NoFlightView_Previews: PreviewProvider {
+    static var previews: some View {
+        NoFlightView()
     }
 }

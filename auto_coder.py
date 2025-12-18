@@ -33,7 +33,7 @@ client = openai.AzureOpenAI(
     api_version="2024-02-01",
     azure_endpoint="https://ai-proxy.lab.epam.com"
 )
-AI_MODEL_DEPLOYMENT = "gpt-4o"  # Use the correct deployment name
+AI_MODEL_DEPLOYMENT = "claude-sonnet-4@20250514"  # Use the correct deployment name
 
 # Github Auth
 g = Github(auth=Auth.Token(GITHUB_TOKEN))

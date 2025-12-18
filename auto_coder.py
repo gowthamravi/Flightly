@@ -33,7 +33,7 @@ client = openai.AzureOpenAI(
     api_version="2024-02-01",
     azure_endpoint="https://ai-proxy.lab.epam.com"
 )
-AI_MODEL_DEPLOYMENT = "gemini-2.5-pro"  # Use the correct deployment name
+AI_MODEL_DEPLOYMENT = "gpt-4o"  # Use the correct deployment name
 
 # Github Auth
 g = Github(auth=Auth.Token(GITHUB_TOKEN))
@@ -161,6 +161,20 @@ def sanitize_path(path):
     
     return path
 
+def clean_json_response(content):
+    """
+    Cleans the AI response to ensure it's valid JSON.
+    Removes markdown code blocks (```json ... ```).
+    """
+    if "```" in content:
+        # Extract content between the first and last validation of ```
+        # This handles ```json ... ``` or just ``` ... ```
+        pattern = r"```(?:json)?\s*(.*?)```"
+        match = re.search(pattern, content, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+    return content.strip()
+
 def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
     """
     The Brain: Sends context to OpenAI Proxy and asks for JSON output.
@@ -218,18 +232,23 @@ def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
         stop_event.set()
         loader_thread.join()
         
-        content = response.choices[0].message.content
-        return json.loads(content)
+        raw_content = response.choices[0].message.content
+        cleaned_content = clean_json_response(raw_content)
         
+        try:
+             return json.loads(cleaned_content)
+        except json.JSONDecodeError as e:
+            print(f"\n❌ JSON Parsing Failed!")
+            print(f"--- RAW RESPONSE START ---")
+            print(raw_content)
+            print(f"--- RAW RESPONSE END ---")
+            print(f"Error: {e}")
+            return None
+            
     except openai.APIError as e:
         stop_event.set()
         loader_thread.join()
         print(f"❌ OpenAI API Error: {e}")
-        return None
-    except json.JSONDecodeError as e:
-        stop_event.set()
-        loader_thread.join()
-        print(f"❌ Error parsing JSON response: {e}")
         return None
     except Exception as e:
         stop_event.set()

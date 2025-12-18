@@ -256,6 +256,235 @@ def generate_code_with_proxy(ticket_id, description, user_prompt, structure):
         print(f"❌ Unexpected Error: {e}")
         return None
 
+def run_xcodebuild(project_path="FlightSearch.xcodeproj", scheme="FlightSearch", max_output_lines=100):
+    """
+    Runs xcodebuild to compile the project and check for errors.
+    Returns (success: bool, error_output: str)
+    """
+    print("\n🔨 Building project with xcodebuild...")
+    
+    cmd = [
+        "xcodebuild",
+        "-project", project_path,
+        "-scheme", scheme,
+        "-configuration", "Debug",
+        "build",
+        "CODE_SIGNING_ALLOWED=NO",
+        "CODE_SIGNING_REQUIRED=NO",
+        "CODE_SIGN_IDENTITY="
+    ]
+    
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=os.getcwd(),
+            timeout=300  # 5 minute timeout
+        )
+        
+        if result.returncode == 0:
+            print("✅ Build succeeded!")
+            return True, ""
+        else:
+            # Extract error messages from output
+            error_lines = []
+            for line in result.stderr.split('\n') + result.stdout.split('\n'):
+                if 'error:' in line.lower() or 'warning:' in line.lower():
+                    error_lines.append(line)
+            
+            # Limit output to avoid overwhelming the AI
+            error_output = '\n'.join(error_lines[-max_output_lines:])
+            
+            print(f"❌ Build failed with {len(error_lines)} errors/warnings")
+            return False, error_output
+            
+    except subprocess.TimeoutExpired:
+        print("❌ Build timed out after 5 minutes")
+        return False, "Build process timed out"
+    except Exception as e:
+        print(f"❌ Error running xcodebuild: {e}")
+        return False, str(e)
+
+def fix_build_errors_with_ai(error_output, structure, modified_files):
+    """
+    Uses AI to analyze build errors and suggest fixes.
+    Returns JSON with file modifications or None if AI can't help.
+    """
+    print("\n🤖 Asking AI to fix build errors...")
+    
+    system_prompt = "You are a Senior iOS Engineer specializing in fixing Swift compilation errors. Return ONLY valid JSON."
+    
+    # Get content of modified files for context
+    file_contents = {}
+    for file_path in modified_files:
+        try:
+            if os.path.exists(file_path):
+                with open(file_path, 'r') as f:
+                    file_contents[file_path] = f.read()
+        except Exception as e:
+            print(f"⚠️ Could not read {file_path}: {e}")
+    
+    files_context = "\n\n".join([
+        f"FILE: {path}\n```swift\n{content}\n```" 
+        for path, content in file_contents.items()
+    ])
+    
+    user_message = f"""
+    TASK:
+    The following Swift files have compilation errors. Analyze the errors and provide fixes.
+    
+    BUILD ERRORS:
+    {error_output}
+    
+    MODIFIED FILES:
+    {files_context}
+    
+    PROJECT STRUCTURE:
+    {structure}
+    
+    OUTPUT FORMAT:
+    Return a JSON object with this exact schema:
+    {{
+        "files": [
+            {{
+                "path": "FlightSearch/Views/SomeFile.swift",
+                "content": "<complete fixed file content>"
+            }}
+        ],
+        "fix_summary": "Brief explanation of what was fixed"
+    }}
+    
+    IMPORTANT:
+    1. Only include files that need to be modified to fix the errors
+    2. Provide the COMPLETE file content, not just the changed lines
+    3. Use RELATIVE paths from project root
+    4. Focus on fixing compilation errors, not warnings
+    """
+    
+    stop_event = threading.Event()
+    loader_thread = threading.Thread(target=loading_animation, args=(stop_event,))
+    loader_thread.start()
+    
+    try:
+        response = client.chat.completions.create(
+            model=AI_MODEL_DEPLOYMENT,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.2,
+            response_format={"type": "json_object"}
+        )
+        
+        stop_event.set()
+        loader_thread.join()
+        
+        raw_content = response.choices[0].message.content
+        cleaned_content = clean_json_response(raw_content)
+        
+        try:
+            fix_data = json.loads(cleaned_content)
+            if 'fix_summary' in fix_data:
+                print(f"💡 AI suggests: {fix_data['fix_summary']}")
+            return fix_data
+        except json.JSONDecodeError as e:
+            print(f"❌ Failed to parse AI fix response: {e}")
+            return None
+            
+    except Exception as e:
+        stop_event.set()
+        loader_thread.join()
+        print(f"❌ Error getting AI fix: {e}")
+        return None
+
+def apply_fixes(fix_data, repo):
+    """
+    Applies the AI-suggested fixes to files.
+    Returns list of modified file paths.
+    """
+    modified_files = []
+    
+    if not fix_data or 'files' not in fix_data:
+        return modified_files
+    
+    for file_obj in fix_data['files']:
+        file_path = sanitize_path(file_obj['path'])
+        
+        print(f"🔧 Applying fix to {file_path}...")
+        
+        try:
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            
+            with open(file_path, 'w') as f:
+                f.write(file_obj['content'])
+            
+            repo.index.add([file_path])
+            modified_files.append(file_path)
+            
+        except Exception as e:
+            print(f"⚠️ Failed to apply fix to {file_path}: {e}")
+    
+    return modified_files
+
+def build_and_fix_loop(repo, structure, initial_files, max_retries=3):
+    """
+    Main build verification loop with AI-powered auto-fix.
+    Returns True if build succeeds, False otherwise.
+    """
+    modified_files = initial_files.copy()
+    
+    for attempt in range(max_retries + 1):
+        if attempt == 0:
+            print("\n" + "="*60)
+            print("🔍 INITIAL BUILD VERIFICATION")
+            print("="*60)
+        else:
+            print("\n" + "="*60)
+            print(f"🔄 BUILD FIX ATTEMPT {attempt}/{max_retries}")
+            print("="*60)
+        
+        success, error_output = run_xcodebuild()
+        
+        if success:
+            print("\n✅ Build verification passed!")
+            return True
+        
+        if attempt < max_retries:
+            print(f"\n⚠️ Build failed. Attempting AI-powered fix ({attempt + 1}/{max_retries})...")
+            
+            fix_data = fix_build_errors_with_ai(error_output, structure, modified_files)
+            
+            if fix_data:
+                newly_modified = apply_fixes(fix_data, repo)
+                modified_files.extend(newly_modified)
+                
+                # Update Xcode project if Swift files were modified
+                for file_path in newly_modified:
+                    if file_path.endswith(".swift"):
+                        add_file_to_xcode(file_path)
+                
+                # Stage the project file changes
+                try:
+                    repo.index.add(["FlightSearch.xcodeproj/project.pbxproj"])
+                except:
+                    pass
+                
+                # Amend the commit with fixes
+                try:
+                    repo.index.commit(f"AI: Auto-fix build errors (attempt {attempt + 1})", amend=True)
+                except:
+                    repo.index.commit(f"AI: Auto-fix build errors (attempt {attempt + 1})")
+            else:
+                print("❌ AI could not suggest fixes. Manual intervention required.")
+                break
+        else:
+            print(f"\n❌ Build still failing after {max_retries} fix attempts.")
+            print("⚠️ Manual review required. Pushing code anyway for human review.")
+            return False
+    
+    return False
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--ticket", required=True, help="Jira Ticket ID (e.g., DP-4)")
@@ -370,12 +599,30 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to write file {file_path}: {e}")
 
-    # 6. Commit & Push
+    # 6. Build Verification and Auto-Fix
+    print("\n" + "="*60)
+    print("🔨 BUILD VERIFICATION PHASE")
+    print("="*60)
+    
+    # Get list of files we just created/modified
+    initial_files = [sanitize_path(f['path']) for f in generated_data['files']]
+    
+    # Run build verification with auto-fix loop
+    build_success = build_and_fix_loop(repo, structure, initial_files, max_retries=3)
+    
+    if not build_success:
+        print("\n⚠️ WARNING: Code has build issues but will be pushed for review.")
+    
+    # 7. Commit & Push
     repo.index.commit(f"AI: Implemented {args.ticket}")
     print("🚀 Pushing to origin...")
-    repo.remote().push(branch_name)
+    try:
+        repo.remote().push(branch_name, force=True)  # Force push since we may have amended commits
+    except Exception as e:
+        print(f"⚠️ Push failed: {e}")
+        return
 
-    # 7. Create or Update PR
+    # 8. Create or Update PR
     print("✨ Checking for existing Pull Request...")
     gh_repo = g.get_repo(args.repo)
     

@@ -8,5 +8,7 @@ automation.md
 
 .DS_Store
 *.xcuserstate
+xcuserdata/
+.bundle/
 vendor/
 .env

@@ -11,7 +11,10 @@
 		46FFD5BF2EF3090E00A453BE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */; };
 		46FFD5C02EF3090E00A453BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B628A789F96C70A1CB76B348 /* LoginView.swift */; };
 		46FFD5C12EF3093000A453BE /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */; };
+		50EE30927A1D27D96C893494 /* FlightDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A398D2D4662ECB960DDB95D /* FlightDetailsViewTests.swift */; };
 		56A7EDE454826ADFF79417FE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DE787DEAD140B6413B4318 /* User.swift */; };
+		65857F35B839C8B31B67C0BE /* FlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E2AE89A7EEAE3456A8A767 /* FlightTests.swift */; };
+		6F041495AAB55AA5E6C49986 /* FlightDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90257FF032003A73C7C0AA6 /* FlightDetailsView.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
 		A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */; };
@@ -43,6 +46,7 @@
 		A3B5EC3A2AF41141002EC7DE /* FlightSearchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */; };
 		A3DAB6A82AF7B62D00B3E1B2 /* ServiceHandler in Frameworks */ = {isa = PBXBuildFile; productRef = A3DAB6A72AF7B62D00B3E1B2 /* ServiceHandler */; };
 		CAA7F7664AC817C261AA97A9 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A777EB06DEE14A0FD2A000 /* AuthViewModel.swift */; };
+		E425D6BB945105A977127D5E /* Flight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E30269DE416FAF9DCEFB4 /* Flight.swift */; };
 		ED4E73CE2B8F1446004F8882 /* NavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */; };
 		ED862DED2B6EAAD900D8B3F7 /* SwiftMacros in Frameworks */ = {isa = PBXBuildFile; productRef = ED862DEC2B6EAAD900D8B3F7 /* SwiftMacros */; };
 		EDB4F7302B6EAEBD0092D19B /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = EDB4F72F2B6EAEBD0092D19B /* SwiftBasicFormat */; };
@@ -61,6 +65,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A398D2D4662ECB960DDB95D /* FlightDetailsViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightDetailsViewTests.swift; sourceTree = "<group>"; };
+		111E30269DE416FAF9DCEFB4 /* Flight.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Flight.swift; sourceTree = "<group>"; };
+		19E2AE89A7EEAE3456A8A767 /* FlightTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightTests.swift; sourceTree = "<group>"; };
 		53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		812C2838075DB4856FAB93E3 /* AuthService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
@@ -96,6 +103,7 @@
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
 		B628A789F96C70A1CB76B348 /* LoginView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D6A777EB06DEE14A0FD2A000 /* AuthViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		D90257FF032003A73C7C0AA6 /* FlightDetailsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlightDetailsView.swift; sourceTree = "<group>"; };
 		ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPath.swift; sourceTree = "<group>"; };
 		EDB4F73F2B76A8090092D19B /* airport.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = airport.json; sourceTree = "<group>"; };
 		EDBDC2D52B90B7C10016D07B /* Button+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extension.swift"; sourceTree = "<group>"; };
@@ -126,6 +134,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		018075E14086FD9FC023CD24 /* FlightSearchTests */ = {
+			isa = PBXGroup;
+			children = (
+				7C58C0EFED9B6793E936309D /* Flights */,
+			);
+			name = FlightSearchTests;
+			path = FlightSearchTests;
+			sourceTree = "<group>";
+		};
 		0D8004D433F1E642A972F6CF /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +156,16 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
+		7C58C0EFED9B6793E936309D /* Flights */ = {
+			isa = PBXGroup;
+			children = (
+				0A398D2D4662ECB960DDB95D /* FlightDetailsViewTests.swift */,
+				19E2AE89A7EEAE3456A8A767 /* FlightTests.swift */,
+			);
+			name = Flights;
+			path = Flights;
+			sourceTree = "<group>";
+		};
 		A341ACA12AF7B9C400CF69E5 /* Flights */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +173,8 @@
 				A341ACA82AF7C8D700CF69E5 /* FlightRow.swift */,
 				A341ACAA2AF7C8ED00CF69E5 /* FareView.swift */,
 				A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */,
+				D90257FF032003A73C7C0AA6 /* FlightDetailsView.swift */,
+				111E30269DE416FAF9DCEFB4 /* Flight.swift */,
 			);
 			path = Flights;
 			sourceTree = "<group>";
@@ -156,6 +185,7 @@
 				A378D8602AF19C15003D3BDB /* FlightSearch */,
 				A378D85F2AF19C15003D3BDB /* Products */,
 				A3DAB6A62AF7B62D00B3E1B2 /* Frameworks */,
+				018075E14086FD9FC023CD24 /* FlightSearchTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -406,6 +436,10 @@
 				56A7EDE454826ADFF79417FE /* User.swift in Sources */,
 				CAA7F7664AC817C261AA97A9 /* AuthViewModel.swift in Sources */,
 				134EBE708D60C63007A6B25F /* AuthService.swift in Sources */,
+				6F041495AAB55AA5E6C49986 /* FlightDetailsView.swift in Sources */,
+				E425D6BB945105A977127D5E /* Flight.swift in Sources */,
+				50EE30927A1D27D96C893494 /* FlightDetailsViewTests.swift in Sources */,
+				65857F35B839C8B31B67C0BE /* FlightTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,7 +19,7 @@ struct PassengerView: View {
                 .customBoarderStyle()
         }
         .sheet(isPresented: $isPresented) {
-            Passengers(isPresented: $isPresented, passengerList: $flight.passengersList)
+            PassengersTupleView(isPresented: $isPresented, passengerList: $flight.passengersList)
                 .navigationBarBackButtonHidden(true)
         }
     }

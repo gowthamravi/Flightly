@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-struct Passengers: View {
+struct PassengersTupleView: View {
     @State private var adults: Int = 1
     @State private var teens: Int = 0
     @State private var childerns: Int = 0

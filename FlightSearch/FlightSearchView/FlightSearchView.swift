@@ -1,14 +1,13 @@
 import SwiftUI
 
 struct FlightSearchView: View {
-    @State private var fromStation: Station?
-    @State private var toStation: Station?
+    @EnvironmentObject private var flight: FlightSearch
     @State private var departureDate = Date()
     @State private var returnDate = Date().addingTimeInterval(86400)
     @State private var passengers = Passengers()
     @State private var isOneWay = false
     @State private var showingStationPicker = false
-    @State private var isSelectingFromStation = true
+    @State private var stationType: StationType = .origin
     @State private var showingPassengerPicker = false
     @State private var showingDatePicker = false
     @State private var isSelectingDepartureDate = true
@@ -34,13 +33,11 @@ struct FlightSearchView: View {
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showingStationPicker) {
-            StationListView(
-                selectedStation: isSelectingFromStation ? $fromStation : $toStation,
-                isPresented: $showingStationPicker
-            )
+            StationListView(isPresented: $showingStationPicker, stationType: stationType)
+                .environmentObject(flight)
         }
         .sheet(isPresented: $showingPassengerPicker) {
-            PassengerView(passengers: $passengers, isPresented: $showingPassengerPicker)
+            PassengerPickerView(passengers: $passengers, isPresented: $showingPassengerPicker)
         }
     }
     
@@ -92,10 +89,10 @@ struct FlightSearchView: View {
             // From Station
             stationRow(
                 title: "From",
-                station: fromStation,
+                station: flight.origin,
                 placeholder: "Select departure city"
             ) {
-                isSelectingFromStation = true
+                stationType = .origin
                 showingStationPicker = true
             }
             
@@ -121,10 +118,10 @@ struct FlightSearchView: View {
             // To Station
             stationRow(
                 title: "To",
-                station: toStation,
+                station: flight.destination,
                 placeholder: "Select destination city"
             ) {
-                isSelectingFromStation = false
+                stationType = .destination
                 showingStationPicker = true
             }
             .offset(y: -16)
@@ -202,7 +199,7 @@ struct FlightSearchView: View {
                 .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
         )
         .sheet(isPresented: $showingDatePicker) {
-            DateView(
+            DatePickerView(
                 selectedDate: isSelectingDepartureDate ? $departureDate : $returnDate,
                 isPresented: $showingDatePicker,
                 title: isSelectingDepartureDate ? "Select Departure Date" : "Select Return Date"
@@ -304,17 +301,17 @@ struct FlightSearchView: View {
     }
     
     private var isSearchEnabled: Bool {
-        fromStation != nil && toStation != nil
+        flight.origin != nil && flight.destination != nil
     }
     
     private func swapStations() {
-        let temp = fromStation
-        fromStation = toStation
-        toStation = temp
+        let temp = flight.origin
+        flight.origin = flight.destination
+        flight.destination = temp
     }
     
     private func searchFlights() {
         // Implement flight search logic
-        print("Searching flights from \(fromStation?.name ?? "") to \(toStation?.name ?? "")")
+        print("Searching flights from \(flight.origin?.name ?? "") to \(flight.destination?.name ?? "")")
     }
 }

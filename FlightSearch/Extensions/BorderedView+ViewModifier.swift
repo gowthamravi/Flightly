@@ -1,26 +1,19 @@
-//
-//  BorderedView+ViewModifier.swift
-//  FlightSearch
-//
-//  Created by Gowtham on 03/11/2023.
-//
-
-import Foundation
 import SwiftUI
 
-struct BorderedView: ViewModifier {
+struct BorderedViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .foregroundColor(.primary)
             .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.clear)
-            .foregroundStyle(.blue)
-            .border(.blue)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.primary, lineWidth: 1)
+            )
     }
 }
 
 extension View {
-    func customBoarderStyle() -> some View {
-        modifier(BorderedView())
+    func borderedViewStyle() -> some View {
+        self.modifier(BorderedViewModifier())
     }
 }

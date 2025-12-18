@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		134EBE708D60C63007A6B25F /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812C2838075DB4856FAB93E3 /* AuthService.swift */; };
+		465C215C0503B4A254302C0E /* ButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E645B8F7EBED23EC493E33 /* ButtonExtensionTests.swift */; };
 		46FFD5BF2EF3090E00A453BE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8442E4B5D2CF4E498A56F358 /* LoginViewModel.swift */; };
 		46FFD5C02EF3090E00A453BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B628A789F96C70A1CB76B348 /* LoginView.swift */; };
 		46FFD5C12EF3093000A453BE /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FFCC83BF72C51E414426F2 /* AuthenticationService.swift */; };
@@ -98,6 +99,7 @@
 		A3829BE62AF2EA3E00B927FF /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		A3829BEA2AF2EF5400B927FF /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A3B5EC392AF41141002EC7DE /* FlightSearchingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchingService.swift; sourceTree = "<group>"; };
+		B2E645B8F7EBED23EC493E33 /* ButtonExtensionTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ButtonExtensionTests.swift; sourceTree = "<group>"; };
 		B628A789F96C70A1CB76B348 /* LoginView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D6A777EB06DEE14A0FD2A000 /* AuthViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPath.swift; sourceTree = "<group>"; };
@@ -141,6 +143,15 @@
 				812C2838075DB4856FAB93E3 /* AuthService.swift */,
 			);
 			path = Auth;
+			sourceTree = "<group>";
+		};
+		6F8A9208CDD66BA8D6EFFCED /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B2E645B8F7EBED23EC493E33 /* ButtonExtensionTests.swift */,
+			);
+			name = Extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		8FAB6D52E8C2A663247821E9 /* Components */ = {
@@ -306,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				8FAB6D52E8C2A663247821E9 /* Components */,
+				6F8A9208CDD66BA8D6EFFCED /* Extensions */,
 			);
 			name = FlightSearchTests;
 			path = FlightSearchTests;
@@ -441,6 +453,7 @@
 				134EBE708D60C63007A6B25F /* AuthService.swift in Sources */,
 				9C1614EA3C3F74A27BFCB1D9 /* FlightlyButton.swift in Sources */,
 				4A7D1DFD39C0A3013D28DE06 /* FlightlyButtonTests.swift in Sources */,
+				465C215C0503B4A254302C0E /* ButtonExtensionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,7 +2,7 @@ import XCTest
 import SwiftUI
 @testable import FlightSearch
 
-final class FlightlyButtonTests: XCTestCase {
+final class ButtonExtensionTests: XCTestCase {
     
     func testFlightlyButtonCreation() {
         let button = FlightlyButton(title: "Test Button") {

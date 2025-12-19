@@ -50,7 +50,11 @@ dir_components.each do |component|
 end
 
 # Check if file ref exists
-existing_ref = current_group.files.find { |f| f.path == file_name }
+# Handle both regular groups and PBXFileSystemSynchronizedRootGroup
+existing_ref = nil
+if current_group.respond_to?(:files)
+  existing_ref = current_group.files.find { |f| f.path == file_name }
+end
 
 if existing_ref
   unless target.source_build_phase.files_references.include?(existing_ref)
@@ -58,10 +62,16 @@ if existing_ref
     puts "🔹 Added existing ref #{file_name} to target"
   end
 else
-  # new_file(file_path) adds relative to group
-  file_ref = current_group.new_file(file_name)
-  target.add_file_references([file_ref])
-  puts "✅ Added #{file_name} to group '#{current_group.name}'"
+  # For PBXFileSystemSynchronizedRootGroup, we can't add files directly
+  # Skip adding to these groups as they auto-sync with the file system
+  if current_group.is_a?(Xcodeproj::Project::Object::PBXFileSystemSynchronizedRootGroup)
+    puts "⚠️  Skipping #{file_name} - parent is a file system synchronized group (auto-synced)"
+  else
+    # new_file(file_path) adds relative to group
+    file_ref = current_group.new_file(file_name)
+    target.add_file_references([file_ref])
+    puts "✅ Added #{file_name} to group '#{current_group.name}'"
+  end
 end
 
 project.save

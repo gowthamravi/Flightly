@@ -7,6 +7,16 @@ check_api_limits.py
 check_models.py
 automation.md
 
+# Temporary helper scripts
+add_*.py
+fix_*.py
+patch_*.py
+integrate_*.py
+update_*.py
+
+# Figma reference images
+.figma_component_reference.png
+
 .DS_Store
 *.xcuserstate
 xcuserdata/

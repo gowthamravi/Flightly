@@ -52,7 +52,7 @@ struct FlightSearchView: View {
             StationListView(selectedStation: stationPickerType == .from ? $fromStation : $toStation)
         }
         .sheet(isPresented: $showingPassengerPicker) {
-            PassengerView(passengers: $passengers)
+            PassengerView(passengers: $passengers, isPresented: $showingPassengerPicker, passengerList: $passengers)
         }
         .sheet(isPresented: $showingDatePicker) {
             SelectDateView(
@@ -353,4 +353,8 @@ struct FlightSearchView: View {
         .disabled(fromStation == nil || toStation == nil)
         .opacity(fromStation == nil || toStation == nil ? 0.6 : 1.0)
     }
+}
+
+#Preview {
+    FlightSearchView()
 }

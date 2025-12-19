@@ -65,7 +65,7 @@ struct FromView: View {
                 .stroke(Color.borderColor, lineWidth: 1)
         )
         .sheet(isPresented: $isShowingStationList) {
-            StationView(isPresented: $isShowingStationList, stationType: .origin)
+            StationView(stationType: .origin)
         }
     }
 }

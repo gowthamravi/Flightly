@@ -10,313 +10,341 @@ struct FlightSearchView: View {
     @State private var showingStationPicker = false
     @State private var stationPickerType: StationPickerType = .from
     @State private var showingPassengerView = false
-    @State private var showingDatePicker = false
-    @State private var datePickerType: DatePickerType = .departure
+    @Environment(\.dismiss) private var dismiss
     
     enum StationPickerType {
         case from, to
     }
     
-    enum DatePickerType {
-        case departure, return
-    }
-    
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
-                    headerSection
+                VStack(spacing: 0) {
+                    // Header
+                    headerView
                     
-                    VStack(spacing: 16) {
+                    // Main Content
+                    VStack(spacing: 24) {
+                        // Trip Type Selector
                         tripTypeSelector
-                        stationSelectionCard
+                        
+                        // Flight Route Card
+                        flightRouteCard
+                        
+                        // Date Selection Card
                         dateSelectionCard
+                        
+                        // Passenger Selection Card
                         passengerSelectionCard
+                        
+                        // Search Button
                         searchButton
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 24)
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color(red: 0.97, green: 0.98, blue: 1.0))
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showingStationPicker) {
             StationListView(selectedStation: stationPickerType == .from ? $fromStation : $toStation)
         }
         .sheet(isPresented: $showingPassengerView) {
-            PassengerView(passengers: $passengers)
-        }
-        .sheet(isPresented: $showingDatePicker) {
-            DatePickerView(selectedDate: datePickerType == .departure ? $departureDate : $returnDate, title: datePickerType == .departure ? "Departure Date" : "Return Date")
+            PassengerView(isPresented: $showingPassengerView, passengers: $passengers, passengerList: passengers)
         }
     }
     
-    private var headerSection: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Text("Where to?")
-                    .font(.system(size: 28, weight: .bold, design: .default))
-                    .foregroundColor(.primary)
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 60)
-            
-            HStack {
-                Text("Find the best flights for your next adventure")
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(.secondary)
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-        }
-        .background(
+    private var headerView: some View {
+        ZStack {
+            // Background gradient
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.clear]),
-                startPoint: .top,
-                endPoint: .bottom
+                gradient: Gradient(colors: [
+                    Color(red: 0.2, green: 0.4, blue: 0.8),
+                    Color(red: 0.1, green: 0.3, blue: 0.7)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
-        )
+            .frame(height: 120)
+            
+            VStack {
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Search Flights")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    // Placeholder for balance
+                    Color.clear
+                        .frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 50)
+                
+                Spacer()
+            }
+        }
     }
     
     private var tripTypeSelector: some View {
         HStack(spacing: 0) {
             Button(action: { isRoundTrip = false }) {
                 Text("One Way")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(isRoundTrip ? .secondary : .white)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(isRoundTrip ? .gray : .white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(isRoundTrip ? Color.clear : Color.blue)
+                    .frame(height: 44)
+                    .background(
+                        isRoundTrip ? Color.clear : Color(red: 0.2, green: 0.4, blue: 0.8)
+                    )
             }
             
             Button(action: { isRoundTrip = true }) {
                 Text("Round Trip")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(isRoundTrip ? .white : .secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(isRoundTrip ? .white : .gray)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(isRoundTrip ? Color.blue : Color.clear)
+                    .frame(height: 44)
+                    .background(
+                        isRoundTrip ? Color(red: 0.2, green: 0.4, blue: 0.8) : Color.clear
+                    )
             }
         }
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .background(Color.white)
+        .cornerRadius(8)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(.systemGray4), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
     }
     
-    private var stationSelectionCard: some View {
-        VStack(spacing: 0) {
-            // From Station
-            Button(action: {
-                stationPickerType = .from
-                showingStationPicker = true
-            }) {
-                HStack {
+    private var flightRouteCard: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("Flight Route")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                Spacer()
+            }
+            
+            HStack(spacing: 12) {
+                // From Station
+                Button(action: {
+                    stationPickerType = .from
+                    showingStationPicker = true
+                }) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("From")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.gray)
                         
-                        if let fromStation = fromStation {
-                            Text(fromStation.name)
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
-                            Text(fromStation.code)
-                                .font(.system(size: 14, weight: .regular))
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("Select departure city")
-                                .font(.system(size: 18, weight: .regular))
-                                .foregroundColor(.secondary)
+                        HStack {
+                            Text(fromStation?.code ?? "Select")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.black)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
                         }
+                        
+                        Text(fromStation?.name ?? "Departure city")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "airplane.departure")
-                        .font(.system(size: 20))
-                        .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(12)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
                 }
-                .padding(16)
-            }
-            
-            Divider()
-                .padding(.horizontal, 16)
-            
-            // Swap Button
-            HStack {
-                Spacer()
+                
+                // Swap Button
                 Button(action: swapStations) {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.blue)
-                        .padding(8)
-                        .background(Color.blue.opacity(0.1))
-                        .clipShape(Circle())
+                    Image(systemName: "arrow.left.arrow.right")
+                        .font(.system(size: 16))
+                        .foregroundColor(Color(red: 0.2, green: 0.4, blue: 0.8))
+                        .frame(width: 32, height: 32)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
                 }
-                Spacer()
-            }
-            .padding(.vertical, 8)
-            
-            Divider()
-                .padding(.horizontal, 16)
-            
-            // To Station
-            Button(action: {
-                stationPickerType = .to
-                showingStationPicker = true
-            }) {
-                HStack {
+                
+                // To Station
+                Button(action: {
+                    stationPickerType = .to
+                    showingStationPicker = true
+                }) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("To")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.gray)
                         
-                        if let toStation = toStation {
-                            Text(toStation.name)
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
-                            Text(toStation.code)
-                                .font(.system(size: 14, weight: .regular))
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("Select destination city")
-                                .font(.system(size: 18, weight: .regular))
-                                .foregroundColor(.secondary)
+                        HStack {
+                            Text(toStation?.code ?? "Select")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.black)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
                         }
+                        
+                        Text(toStation?.name ?? "Destination city")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "airplane.arrival")
-                        .font(.system(size: 20))
-                        .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(12)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
                 }
-                .padding(16)
             }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     private var dateSelectionCard: some View {
-        HStack(spacing: 0) {
-            // Departure Date
-            Button(action: {
-                datePickerType = .departure
-                showingDatePicker = true
-            }) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Departure")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
-                    Text(departureDate.formatted(.dateTime.weekday(.wide)))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.primary)
-                    
-                    Text(departureDate.formatted(.dateTime.month(.abbreviated).day()))
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
+        VStack(spacing: 16) {
+            HStack {
+                Text("Travel Dates")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                Spacer()
             }
             
-            if isRoundTrip {
-                Divider()
-                    .frame(height: 60)
+            HStack(spacing: 12) {
+                // Departure Date
+                DateView(
+                    title: "Departure",
+                    date: $departureDate,
+                    isSelected: true
+                )
                 
-                // Return Date
-                Button(action: {
-                    datePickerType = .return
-                    showingDatePicker = true
-                }) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Return")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
-                        
-                        Text(returnDate.formatted(.dateTime.weekday(.wide)))
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primary)
-                        
-                        Text(returnDate.formatted(.dateTime.month(.abbreviated).day()))
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
+                if isRoundTrip {
+                    // Return Date
+                    DateView(
+                        title: "Return",
+                        date: $returnDate,
+                        isSelected: true
+                    )
                 }
             }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     private var passengerSelectionCard: some View {
-        Button(action: {
-            showingPassengerView = true
-        }) {
+        VStack(spacing: 16) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Passengers")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
-                    Text("\(passengers.totalCount) Passenger\(passengers.totalCount > 1 ? "s" : "")")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
-                    
-                    if passengers.totalCount > 1 {
-                        Text(passengers.description)
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
+                Text("Passengers")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
                 Spacer()
-                
-                Image(systemName: "person.2.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.blue)
             }
-            .padding(16)
+            
+            Button(action: {
+                showingPassengerView = true
+            }) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(passengers.totalCount) Passenger\(passengers.totalCount > 1 ? "s" : "")")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.black)
+                        
+                        Text(passengers.description)
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                }
+                .padding(16)
+                .background(Color.white)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+            }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     private var searchButton: some View {
-        NavigationLink(destination: FlightsListView()) {
+        NavigationLink(destination: FlightsListView(
+            fromStation: fromStation,
+            toStation: toStation,
+            departureDate: departureDate,
+            returnDate: isRoundTrip ? returnDate : nil,
+            passengers: passengers
+        )) {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 16, weight: .medium))
                 
                 Text("Search Flights")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+            .frame(height: 52)
             .background(
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                    gradient: Gradient(colors: [
+                        Color(red: 0.2, green: 0.4, blue: 0.8),
+                        Color(red: 0.1, green: 0.3, blue: 0.7)
+                    ]),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
             )
-            .cornerRadius(16)
-            .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+            .cornerRadius(12)
+            .shadow(color: Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.3), radius: 8, x: 0, y: 4)
         }
         .disabled(fromStation == nil || toStation == nil)
         .opacity(fromStation == nil || toStation == nil ? 0.6 : 1.0)
+        .padding(.top, 8)
     }
     
     private func swapStations() {
@@ -326,48 +354,8 @@ struct FlightSearchView: View {
     }
 }
 
-struct DatePickerView: View {
-    @Binding var selectedDate: Date
-    let title: String
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                DatePicker(
-                    "Select Date",
-                    selection: $selectedDate,
-                    in: Date()...,
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.graphical)
-                .padding()
-                
-                Spacer()
-                
-                Button("Done") {
-                    dismiss()
-                }
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.blue)
-                .cornerRadius(12)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
-            }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                leading: Button("Cancel") {
-                    dismiss()
-                }
-            )
-        }
+struct FlightSearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlightSearchView()
     }
-}
-
-#Preview {
-    FlightSearchView()
 }

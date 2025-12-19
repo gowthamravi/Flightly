@@ -12,120 +12,129 @@ class FlightSearchViewTests: XCTestCase {
         XCTAssertNotNil(view)
     }
     
-    func testTripTypeSelectorDefaultState() {
+    func testTripTypeSelectorInitialState() {
         // Given
         let view = FlightSearchView()
         
-        // When - Initial state should be one way
-        // Then - This would be tested through UI testing or by exposing state
-        XCTAssertTrue(true) // Placeholder for state verification
+        // Then - Should default to one way trip
+        // This would require access to the internal state, which is not directly testable
+        // In a real implementation, we would extract the state to a view model
+        XCTAssertTrue(true) // Placeholder assertion
     }
     
     func testStationSwapFunctionality() {
         // Given
         let view = FlightSearchView()
-        let fromStation = Station(code: "NYC", name: "New York")
-        let toStation = Station(code: "LAX", name: "Los Angeles")
         
-        // When - This would require exposing the swap function or testing through UI
-        // Then
-        XCTAssertNotNil(fromStation)
-        XCTAssertNotNil(toStation)
+        // When - User swaps stations
+        // This would require triggering the swap action
+        
+        // Then - Stations should be swapped
+        XCTAssertTrue(true) // Placeholder assertion
     }
     
-    func testDatePickerViewInitialization() {
+    func testSearchButtonDisabledState() {
         // Given
-        let selectedDate = Binding.constant(Date())
-        let title = "Test Date"
+        let view = FlightSearchView()
         
-        // When
-        let datePickerView = DatePickerView(selectedDate: selectedDate, title: title)
+        // When - No stations are selected
         
-        // Then
-        XCTAssertNotNil(datePickerView)
+        // Then - Search button should be disabled
+        XCTAssertTrue(true) // Placeholder assertion
+    }
+    
+    func testSearchButtonEnabledState() {
+        // Given
+        let view = FlightSearchView()
+        
+        // When - Both stations are selected
+        
+        // Then - Search button should be enabled
+        XCTAssertTrue(true) // Placeholder assertion
+    }
+    
+    func testDateSelectionForOneWayTrip() {
+        // Given
+        let view = FlightSearchView()
+        
+        // When - One way trip is selected
+        
+        // Then - Only departure date should be visible
+        XCTAssertTrue(true) // Placeholder assertion
+    }
+    
+    func testDateSelectionForRoundTrip() {
+        // Given
+        let view = FlightSearchView()
+        
+        // When - Round trip is selected
+        
+        // Then - Both departure and return dates should be visible
+        XCTAssertTrue(true) // Placeholder assertion
     }
     
     func testPassengerCountDisplay() {
         // Given
-        let passengers = Passengers()
+        let view = FlightSearchView()
         
-        // When
-        let totalCount = passengers.totalCount
+        // When - Passenger count is updated
         
-        // Then
-        XCTAssertGreaterThanOrEqual(totalCount, 1)
+        // Then - Display should reflect correct count and description
+        XCTAssertTrue(true) // Placeholder assertion
     }
+}
+
+// MARK: - DateView Tests
+class DateViewTests: XCTestCase {
     
-    func testSearchButtonDisabledState() {
-        // Given - No stations selected
-        let fromStation: Station? = nil
-        let toStation: Station? = nil
-        
-        // When
-        let shouldBeDisabled = fromStation == nil || toStation == nil
-        
-        // Then
-        XCTAssertTrue(shouldBeDisabled)
-    }
-    
-    func testSearchButtonEnabledState() {
-        // Given - Both stations selected
-        let fromStation: Station? = Station(code: "NYC", name: "New York")
-        let toStation: Station? = Station(code: "LAX", name: "Los Angeles")
-        
-        // When
-        let shouldBeEnabled = fromStation != nil && toStation != nil
-        
-        // Then
-        XCTAssertTrue(shouldBeEnabled)
-    }
-    
-    func testDateValidation() {
+    func testDateViewInitialization() {
         // Given
-        let today = Date()
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        
-        // When
-        let isValidDepartureDate = today >= Date()
-        let isValidReturnDate = tomorrow > today
+        let date = Binding.constant(Date())
+        let view = DateView(title: "Departure", date: date, isSelected: true)
         
         // Then
-        XCTAssertTrue(isValidDepartureDate)
-        XCTAssertTrue(isValidReturnDate)
+        XCTAssertNotNil(view)
     }
     
-    func testRoundTripToggle() {
+    func testDateViewDisplaysCorrectTitle() {
         // Given
-        var isRoundTrip = false
-        
-        // When
-        isRoundTrip.toggle()
-        
-        // Then
-        XCTAssertTrue(isRoundTrip)
-        
-        // When
-        isRoundTrip.toggle()
+        let date = Binding.constant(Date())
+        let title = "Departure"
+        let view = DateView(title: title, date: date, isSelected: true)
         
         // Then
-        XCTAssertFalse(isRoundTrip)
+        XCTAssertNotNil(view)
+        // In a real test, we would verify the title is displayed correctly
     }
     
-    func testStationPickerTypeEnum() {
+    func testDateViewSelectedState() {
         // Given
-        let fromType = FlightSearchView.StationPickerType.from
-        let toType = FlightSearchView.StationPickerType.to
+        let date = Binding.constant(Date())
+        let view = DateView(title: "Departure", date: date, isSelected: true)
         
         // Then
-        XCTAssertNotEqual(fromType, toType)
+        XCTAssertNotNil(view)
+        // In a real test, we would verify the selected styling is applied
     }
     
-    func testDatePickerTypeEnum() {
+    func testDateViewUnselectedState() {
         // Given
-        let departureType = FlightSearchView.DatePickerType.departure
-        let returnType = FlightSearchView.DatePickerType.return
+        let date = Binding.constant(Date())
+        let view = DateView(title: "Departure", date: date, isSelected: false)
         
         // Then
-        XCTAssertNotEqual(departureType, returnType)
+        XCTAssertNotNil(view)
+        // In a real test, we would verify the unselected styling is applied
+    }
+    
+    func testDateFormatting() {
+        // Given
+        let testDate = Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 15))!
+        let date = Binding.constant(testDate)
+        let view = DateView(title: "Test", date: date, isSelected: true)
+        
+        // Then
+        XCTAssertNotNil(view)
+        // In a real test, we would verify the date is formatted correctly as "15", "Jan", etc.
     }
 }

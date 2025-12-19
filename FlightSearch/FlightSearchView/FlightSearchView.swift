@@ -55,10 +55,11 @@ struct FlightSearchView: View {
             PassengerView(passengers: $passengers)
         }
         .sheet(isPresented: $showingDatePicker) {
-            DateView(
+            SelectDateView(
                 selectedDate: datePickerType == .departure ? $departureDate : $returnDate,
-                title: datePickerType == .departure ? "Departure Date" : "Return Date"
+                isPresented: $showingDatePicker
             )
+            .navigationBarBackButtonHidden(true)
         }
     }
     

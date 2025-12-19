@@ -105,7 +105,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FlightSearchTests; sourceTree = "<group>"; };
+		46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = FlightSearchTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -296,8 +306,6 @@
 				46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */,
 			);
 			name = FlightSearchTests;
-			packageProductDependencies = (
-			);
 			productName = FlightSearchTests;
 			productReference = 46FFD5FB2EF46C9A00A453BE /* FlightSearchTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";

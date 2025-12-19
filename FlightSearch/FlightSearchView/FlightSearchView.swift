@@ -51,7 +51,7 @@ struct FlightSearchView: View {
             StationListView(selectedStation: stationPickerType == .from ? $fromStation : $toStation)
         }
         .sheet(isPresented: $showingPassengerView) {
-            PassengerView(isPresented: $showingPassengerView, passengers: $passengers, passengerList: passengers)
+            PassengerView(isPresented: $showingPassengerView, passengerList: $passengers)
         }
     }
     

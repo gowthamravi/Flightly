@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01377DA715A23F36BF004B82 /* FromView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16F39A1CF371BFAC3F79D0E /* FromView.swift */; };
+		03975869E0A46A0EB2CE2571 /* DepartureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384B9FCEECA97E14FFA5F8C /* DepartureView.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
 		A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */; };
@@ -68,6 +69,7 @@
 
 /* Begin PBXFileReference section */
 		28C162E06F239A8CE78D12EB /* Color+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		3384B9FCEECA97E14FFA5F8C /* DepartureView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DepartureView.swift; sourceTree = "<group>"; };
 		46FFD5FB2EF46C9A00A453BE /* FlightSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlightSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
 		A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsListView.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				B16F39A1CF371BFAC3F79D0E /* FromView.swift */,
+				3384B9FCEECA97E14FFA5F8C /* DepartureView.swift */,
 			);
 			name = Components;
 			path = Components;
@@ -465,6 +468,7 @@
 				A37A7A242AF59DD9003789FC /* FlightSearch.swift in Sources */,
 				A9D3F3BF07B17B64B86B2AF2 /* Color+Extension.swift in Sources */,
 				01377DA715A23F36BF004B82 /* FromView.swift in Sources */,
+				03975869E0A46A0EB2CE2571 /* DepartureView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

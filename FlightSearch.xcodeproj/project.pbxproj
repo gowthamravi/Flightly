@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		158611B615208CB358E0DF7E /* FromView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CEC1FD24B70A9D0B805CF7 /* FromView.swift */; };
+		158E5211B935F46D34B9E358 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C9D95E823BD52A2E8F21DC /* Color+Extension.swift */; };
 		A341ACA02AF7B7F700CF69E5 /* Trips.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341AC9F2AF7B7F700CF69E5 /* Trips.swift */; };
 		A341ACA32AF7B9E600CF69E5 /* FlightsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */; };
 		A341ACA52AF7C89900CF69E5 /* NoFlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */; };
@@ -65,7 +67,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07CEC1FD24B70A9D0B805CF7 /* FromView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FromView.swift; sourceTree = "<group>"; };
 		46FFD5FB2EF46C9A00A453BE /* FlightSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlightSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		55C9D95E823BD52A2E8F21DC /* Color+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		A341AC9F2AF7B7F700CF69E5 /* Trips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trips.swift; sourceTree = "<group>"; };
 		A341ACA22AF7B9E600CF69E5 /* FlightsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsListView.swift; sourceTree = "<group>"; };
 		A341ACA42AF7C89900CF69E5 /* NoFlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoFlightView.swift; sourceTree = "<group>"; };
@@ -105,7 +109,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FlightSearchTests; sourceTree = "<group>"; };
+		46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = FlightSearchTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +196,7 @@
 				A378D8652AF19C16003D3BDB /* Assets.xcassets */,
 				EDB4F73F2B76A8090092D19B /* airport.json */,
 				A378D8672AF19C16003D3BDB /* Preview Content */,
+				C7EF99B46D63C03D4750788B /* Components */,
 			);
 			path = FlightSearch;
 			sourceTree = "<group>";
@@ -206,6 +221,7 @@
 				EDF746A02B7A90AB00C6AAD2 /* ActivityIndicator.swift */,
 				ED4E73CD2B8F1446004F8882 /* NavigationPath.swift */,
 				EDBDC2D52B90B7C10016D07B /* Button+Extension.swift */,
+				55C9D95E823BD52A2E8F21DC /* Color+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -276,6 +292,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C7EF99B46D63C03D4750788B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				07CEC1FD24B70A9D0B805CF7 /* FromView.swift */,
+			);
+			name = Components;
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -296,8 +321,6 @@
 				46FFD5FC2EF46C9A00A453BE /* FlightSearchTests */,
 			);
 			name = FlightSearchTests;
-			packageProductDependencies = (
-			);
 			productName = FlightSearchTests;
 			productReference = 46FFD5FB2EF46C9A00A453BE /* FlightSearchTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -440,6 +463,8 @@
 				A37A7A402AF5C402003789FC /* LetsGoView.swift in Sources */,
 				EDBDC2DA2B90EB8D0016D07B /* FavouriteView.swift in Sources */,
 				A37A7A242AF59DD9003789FC /* FlightSearch.swift in Sources */,
+				158E5211B935F46D34B9E358 /* Color+Extension.swift in Sources */,
+				158611B615208CB358E0DF7E /* FromView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
